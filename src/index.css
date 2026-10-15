@@ -1,0 +1,73 @@
+/* Vehicolor · distribuidor
+   Paleta del sitio: negro, rojo (etiqueta de las latas), amarillo y gris para detalles.
+   Tipografía de la marca: Montserrat (títulos) + Roboto (texto). */
+
+:root {
+  --black: #0a0a0b;
+  --black-2: #141416;
+  --black-3: #1e1f22;
+
+  --red: #d81818;        /* blanco encima: 5.0:1 */
+  --red-dark: #b01212;   /* texto rojo sobre claro: 6.5:1 */
+
+  --yellow: #ffc20e;     /* negro encima: 12.6:1 */
+  --yellow-dark: #e6ad00;
+
+  --gray: #8b9098;       /* texto secundario sobre negro: 6.3:1 */
+  --gray-line: #2a2b2f;
+  --gray-light: #f2f2f3;
+  --gray-text: #4a4d53;  /* texto secundario sobre claro */
+  --white: #ffffff;
+
+  --font-heading: 'Montserrat', Arial, sans-serif;
+  --font-body: 'Roboto', Verdana, Helvetica, sans-serif;
+
+  --container: 1200px;
+  --header-h: 76px;
+  --radius-sm: 3px;
+  --radius: 6px;
+  --radius-lg: 12px;
+  --ease: 200ms ease;
+
+  /* Escala de z-index */
+  --z-hero: 1;
+  --z-header: 50;
+  --z-skip: 100;
+
+  color-scheme: dark;
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; scroll-padding-top: var(--header-h); }
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--white);
+  background: var(--black);
+  -webkit-font-smoothing: antialiased;
+}
+
+img, video { display: block; max-width: 100%; }
+
+h1, h2, h3 { font-family: var(--font-heading); line-height: 1.15; margin: 0; }
+
+a { color: inherit; }
+
+:focus-visible {
+  outline: 3px solid var(--yellow);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
