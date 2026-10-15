@@ -35,7 +35,7 @@ function ColorMatch() {
       <div className="container color__grid">
         <img
           className="color__img"
-          src="https://www.vehicolor-carpaint.com/static/upload/image/20250408/1744097917826062.jpg"
+          src="/img/secciones/igualacion-color.jpg"
           alt="Técnico igualando un color de pintura automotriz"
           loading="lazy"
           width="960"
