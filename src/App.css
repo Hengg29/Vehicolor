@@ -361,6 +361,13 @@
 .stepper input::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
 .card__actions .stepper { margin-right: auto; }
 
+/* Tarjeta: PDFs arriba y botón de agregar a todo lo ancho, para que nunca se amontonen */
+.card__docs { display: flex; flex-wrap: wrap; gap: 0 18px; padding: 4px 0 8px; border-top: 1px solid var(--gray-line); }
+.card__buy .btn { width: 100%; }
+.card__buy .stepper { display: flex; width: 100%; height: 44px; }
+.card__buy .stepper button { width: 52px; }
+.card__buy .stepper input { flex: 1; width: auto; }
+
 /* Botón flotante */
 .fab {
   position: fixed; right: 20px; bottom: 20px; z-index: 40;

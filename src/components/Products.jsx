@@ -100,9 +100,11 @@ export default function Products() {
                   Ficha técnica <span aria-hidden="true">+</span>
                 </button>
 
-                <div className="card__actions">
-                  <AddToQuote product={p} />
+                <div className="card__docs">
                   <DocLinks p={p} />
+                </div>
+                <div className="card__buy">
+                  <AddToQuote product={p} />
                 </div>
               </div>
             </article>
