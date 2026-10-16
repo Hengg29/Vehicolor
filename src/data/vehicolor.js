@@ -8,7 +8,7 @@ export const SITE = {
   city: 'San Luis Potosí',
   whatsapp: '520000000000',
   whatsappText: 'Hola, quiero cotizar productos Vehicolor.',
-  email: 'ventas@ejemplo.com',
+  email: 'fer_tachuelita@yahoo.com',
 }
 
 export const waLink = (text = SITE.whatsappText) =>
