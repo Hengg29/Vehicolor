@@ -1,9 +1,11 @@
+import { useCallback, useState } from 'react'
 import Header from './components/Header.jsx'
 import Hero from './components/Hero.jsx'
 import Stats from './components/Stats.jsx'
 import Products from './components/Products.jsx'
 import Icon from './components/Icon.jsx'
 import QuoteDrawer from './components/QuoteDrawer.jsx'
+import Splash from './components/Splash.jsx'
 import { useQuote } from './quote/QuoteContext.js'
 import logo from './assets/logo-vehicolor-blanco.png'
 import { BENEFITS, SITE, waLink } from './data/vehicolor.js'
@@ -112,12 +114,16 @@ function Footer() {
 }
 
 export default function App() {
+  const [videoReady, setVideoReady] = useState(false)
+  const onVideoReady = useCallback(() => setVideoReady(true), [])
+
   return (
     <>
+      <Splash videoReady={videoReady} />
       <a className="skip-link" href="#productos">Saltar al catálogo</a>
       <Header />
       <main>
-        <Hero />
+        <Hero onReady={onVideoReady} />
         <Stats />
         <Products />
         <Benefits />

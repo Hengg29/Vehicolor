@@ -3,6 +3,7 @@ import Icon from './Icon.jsx'
 import { SITE, waLink } from '../data/vehicolor.js'
 
 // WebM (VP9) es más ligero; el MP4 queda de respaldo para Safari viejito
+// El poster (primer cuadro) se ve mientras el video termina de cargar
 const VIDEOS = {
   horizontal: '/videos/hero-horizontal',
   vertical: '/videos/hero-vertical',
@@ -19,12 +20,17 @@ function useMedia(query) {
   )
 }
 
-export default function Hero() {
+export default function Hero({ onReady }) {
   const videoRef = useRef(null)
   const vertical = useMedia('(max-width: 768px) and (orientation: portrait)')
   const reduceMotion = useMedia('(prefers-reduced-motion: reduce)')
   const [paused, setPaused] = useState(reduceMotion)
   const src = vertical ? VIDEOS.vertical : VIDEOS.horizontal
+
+  // Si el video ya venía de caché, puede estar listo antes de que React escuche el evento
+  useEffect(() => {
+    if (videoRef.current?.readyState >= 3) onReady?.()
+  }, [src, onReady])
 
   // Pausa el video cuando el hero sale de pantalla para no gastar datos ni batería
   useEffect(() => {
@@ -55,7 +61,10 @@ export default function Hero() {
         muted
         loop
         playsInline
-        preload="metadata"
+        preload="auto"
+        poster={`${src}-poster.webp`}
+        onCanPlayThrough={onReady}
+        onLoadedData={paused ? onReady : undefined}
         aria-hidden="true"
       >
         <source src={`${src}.webm`} type="video/webm" />
