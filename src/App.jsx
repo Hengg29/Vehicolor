@@ -3,6 +3,8 @@ import Hero from './components/Hero.jsx'
 import Stats from './components/Stats.jsx'
 import Products from './components/Products.jsx'
 import Icon from './components/Icon.jsx'
+import QuoteDrawer from './components/QuoteDrawer.jsx'
+import { useQuote } from './quote/QuoteContext.js'
 import logo from './assets/logo-vehicolor-blanco.png'
 import { BENEFITS, SITE, waLink } from './data/vehicolor.js'
 import './App.css'
@@ -63,18 +65,35 @@ function ColorMatch() {
 }
 
 function Contact() {
+  const { setOpen } = useQuote()
   return (
     <section id="contacto" className="cta">
       <div className="container cta__inner">
         <div>
           <h2 className="cta__title">¿Listo para cotizar?</h2>
-          <p>Mándanos la lista de productos por WhatsApp y te respondemos con precio y disponibilidad.</p>
+          <p>Agrega los productos con sus cantidades, llena tus datos y mándanos el pedido por WhatsApp. Te respondemos con precio y disponibilidad.</p>
         </div>
-        <a className="btn btn--black btn--lg" href={waLink()} target="_blank" rel="noreferrer">
-          <Icon name="chat" size={20} /> Escríbenos por WhatsApp
-        </a>
+        <div className="cta__actions">
+          <button type="button" className="btn btn--black btn--lg" onClick={() => setOpen(true)}>
+            <Icon name="list" size={20} /> Ver mi cotización
+          </button>
+          <a className="cta__link" href={waLink()} target="_blank" rel="noreferrer">
+            ¿Dudas? Escríbenos por WhatsApp
+          </a>
+        </div>
       </div>
     </section>
+  )
+}
+
+// Botón flotante: aparece cuando hay productos en la cotización
+function QuoteFab() {
+  const { count, open, setOpen } = useQuote()
+  if (!count || open) return null
+  return (
+    <button type="button" className="fab" onClick={() => setOpen(true)}>
+      <Icon name="list" size={20} /> Ver cotización <span className="badge badge--dark">{count}</span>
+    </button>
   )
 }
 
@@ -106,6 +125,8 @@ export default function App() {
         <Contact />
       </main>
       <Footer />
+      <QuoteFab />
+      <QuoteDrawer />
     </>
   )
 }

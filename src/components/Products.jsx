@@ -1,5 +1,7 @@
 import { useRef, useState } from 'react'
 import Icon from './Icon.jsx'
+import QtyStepper from './QtyStepper.jsx'
+import { useQuote } from '../quote/QuoteContext.js'
 import { CATEGORIES, PRODUCTS, waLink } from '../data/vehicolor.js'
 
 function DocLinks({ p }) {
@@ -30,6 +32,16 @@ function DocLinks({ p }) {
         </a>
       )}
     </>
+  )
+}
+
+function AddToQuote({ product }) {
+  const { items, add } = useQuote()
+  if (items[product.id]) return <QtyStepper product={product} />
+  return (
+    <button type="button" className="btn btn--yellow btn--sm" onClick={() => add(product.id)}>
+      Agregar
+    </button>
   )
 }
 
@@ -89,9 +101,7 @@ export default function Products() {
                 </button>
 
                 <div className="card__actions">
-                  <a className="btn btn--yellow btn--sm" href={waLink(`Hola, quiero cotizar ${p.name} (Vehicolor).`)} target="_blank" rel="noreferrer">
-                    Cotizar
-                  </a>
+                  <AddToQuote product={p} />
                   <DocLinks p={p} />
                 </div>
               </div>
@@ -125,9 +135,7 @@ export default function Products() {
                 ))}
               </dl>
               <div className="card__actions">
-                <a className="btn btn--yellow btn--sm" href={waLink(`Hola, quiero cotizar ${active.name} (Vehicolor).`)} target="_blank" rel="noreferrer">
-                  Cotizar
-                </a>
+                <AddToQuote product={active} />
                 <DocLinks p={active} />
               </div>
             </div>

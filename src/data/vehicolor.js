@@ -6,7 +6,7 @@ const VC = 'https://www.vehicolor-carpaint.com'
 // TODO: reemplazar con los datos reales del distribuidor
 export const SITE = {
   city: 'San Luis Potosí',
-  whatsapp: '520000000000',
+  whatsapp: '528334273968', // 833 427 3968 (número de ejemplo)
   whatsappText: 'Hola, quiero cotizar productos Vehicolor.',
   email: 'fer_tachuelita@yahoo.com',
 }

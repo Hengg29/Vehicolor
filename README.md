@@ -9,7 +9,7 @@ Vehicolor® es marca de Vehicolor Limited, fabricante de pintura automotriz para
 - **Hero con video:** horizontal en computadora y vertical en celular, con botón para pausarlo.
 - **Catálogo de 12 productos:** bases 1K, acabado 2K, masilla, primarios y barnices, con filtro por categoría.
 - **Ficha técnica por producto:** se abre en una ventana flotante con mezcla, boquilla, manos, secado y lijado, más los enlaces a TDS y MSDS.
-- **Botones de cotizar:** cada uno abre WhatsApp con un mensaje ya escrito que incluye el nombre del producto.
+- **Cotización de varios productos:** el cliente agrega productos con su cantidad, llena nombre, correo, dirección de entrega y notas, y manda todo en un solo mensaje de WhatsApp. La cotización se guarda en el navegador si recarga la página.
 - **Secciones de la marca:** igualación de color, beneficios y datos de la marca.
 
 ## Cómo correrla
@@ -26,6 +26,7 @@ npm run build    # versión para publicar (carpeta dist/)
 |---|---|
 | WhatsApp, correo y ciudad del distribuidor | `src/data/vehicolor.js` → `SITE` |
 | Productos, fichas técnicas y PDFs | `src/data/vehicolor.js` → `PRODUCTS` |
+| Formulario y mensaje de la cotización | `src/components/QuoteDrawer.jsx` |
 | Videos del hero | `public/videos/hero-horizontal.mp4` y `hero-vertical.mp4` |
 | Fotos de categorías, productos y secciones | `public/img/` (copiadas del sitio oficial de Vehicolor) |
 | Colores y tipografías | `src/index.css` |

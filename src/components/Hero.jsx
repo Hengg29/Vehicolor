@@ -73,11 +73,11 @@ export default function Hero() {
           con fichas técnicas y asesoría local.
         </p>
         <div className="hero__actions">
-          <a className="btn btn--red btn--lg" href={waLink()} target="_blank" rel="noreferrer">
-            <Icon name="chat" size={20} /> Cotiza por WhatsApp
+          <a className="btn btn--red btn--lg" href="#productos">
+            Arma tu cotización <Icon name="arrow" size={20} />
           </a>
-          <a className="btn btn--ghost btn--lg" href="#productos">
-            Ver productos <Icon name="arrow" size={20} />
+          <a className="btn btn--ghost btn--lg" href={waLink()} target="_blank" rel="noreferrer">
+            <Icon name="chat" size={20} /> WhatsApp directo
           </a>
         </div>
       </div>

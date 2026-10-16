@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import logo from '../assets/logo-vehicolor-blanco.png'
 import Icon from './Icon.jsx'
-import { waLink } from '../data/vehicolor.js'
+import { useQuote } from '../quote/QuoteContext.js'
 
 const LINKS = [
   { href: '#productos', label: 'Productos' },
@@ -13,6 +13,7 @@ const LINKS = [
 export default function Header() {
   const [solid, setSolid] = useState(false)
   const [open, setOpen] = useState(false)
+  const quote = useQuote()
 
   useEffect(() => {
     // Igual que el sitio oficial: el header se vuelve sólido a los 100 px
@@ -33,9 +34,14 @@ export default function Header() {
           {LINKS.map((l) => (
             <a key={l.href} href={l.href} onClick={() => setOpen(false)}>{l.label}</a>
           ))}
-          <a className="btn btn--red nav__cta" href={waLink()} target="_blank" rel="noreferrer">
-            <Icon name="chat" size={18} /> Cotizar
-          </a>
+          <button
+            type="button"
+            className="btn btn--red nav__cta"
+            onClick={() => { setOpen(false); quote.setOpen(true) }}
+          >
+            <Icon name="list" size={18} /> Cotización
+            {quote.count > 0 && <span className="badge" aria-label={`${quote.count} productos`}>{quote.count}</span>}
+          </button>
         </nav>
 
         <button
