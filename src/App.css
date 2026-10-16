@@ -480,11 +480,12 @@
 .sheet__block { margin-top: 40px; }
 
 .mix {
-  display: flex; overflow: hidden;
+  display: flex; flex-wrap: wrap; overflow: hidden;
   border: 1px solid var(--gray-line); border-radius: var(--radius-sm);
   font: 500 16px ui-monospace, 'SFMono-Regular', Menlo, monospace;
 }
-.mix__part { flex-basis: 0; min-width: 7.5em; padding: 14px 18px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* Cada parte mide al menos lo que su texto; el espacio que sobra se reparte según la proporción */
+.mix__part { flex-basis: auto; flex-shrink: 0; padding: 14px 18px; white-space: nowrap; }
 .mix__part:first-child { background: var(--red); }
 .mix__part + .mix__part { border-left: 1px solid var(--gray-line); }
 .mix__extra, .mix__text { margin: 10px 0 0; font: 500 15px ui-monospace, 'SFMono-Regular', Menlo, monospace; color: var(--yellow); }
@@ -500,8 +501,12 @@
   font: 500 17px ui-monospace, 'SFMono-Regular', Menlo, monospace;
 }
 
-.steps { display: flex; flex-wrap: wrap; align-items: center; row-gap: 12px; margin: 0; padding: 0; list-style: none; }
-.steps__item { display: flex; align-items: center; }
+/* La secuencia va en una sola línea; si no cabe, se desliza de lado en vez de partirse */
+.steps {
+  display: flex; align-items: center; margin: 0; padding: 0 0 6px; list-style: none;
+  overflow-x: auto; scrollbar-width: thin; scrollbar-color: var(--gray-line) transparent;
+}
+.steps__item { display: flex; align-items: center; flex-shrink: 0; }
 .step {
   display: grid; gap: 2px; padding: 12px 18px;
   border: 1px solid #3d3f44; border-radius: var(--radius-sm);
@@ -518,18 +523,94 @@
   font: 500 14px ui-monospace, 'SFMono-Regular', Menlo, monospace; color: var(--yellow); white-space: nowrap;
 }
 
+/* ---- Ficha técnica: tamaños de pantalla ---- */
+
+/* Pantallas grandes (≥ 1440 px) */
+@media (min-width: 1440px) {
+  .specs-dialog--sheet { width: min(100% - 64px, 1200px); }
+  .sheet { grid-template-columns: 380px 1fr; }
+  .sheet__side { padding: 40px; }
+  .sheet__main { padding: 56px 56px 48px; }
+}
+
+/* Laptop (861–1279 px): columna lateral más angosta y todo más compacto */
+@media (min-width: 861px) and (max-width: 1279px) {
+  .sheet { grid-template-columns: 290px 1fr; }
+  .sheet__side { padding: 24px; gap: 20px; }
+  .sheet__main { padding: 40px 32px 32px; }
+  .sheet__title { font-size: clamp(30px, 3.4vw, 40px); }
+  .sheet__summary { font-size: 16px; }
+  .sheet__block { margin-top: 32px; }
+  .sheet__table dt, .sheet__table dd { padding: 12px 14px; font-size: 15px; }
+  .sheet__meta dd { font-size: 15px; }
+  .mix { font-size: 15px; }
+  .mix__part { padding: 12px 14px; }
+}
+
+/* Secuencia compacta en laptop y tablet */
+@media (max-width: 1279px) {
+  .step { padding: 10px 12px; }
+  .step strong { font-size: 13px; letter-spacing: .1em; }
+  .step small { font-size: 13px; }
+  .steps__gap { min-width: 36px; padding: 0 6px 4px; font-size: 13px; }
+}
+
+/* Laptops con poca altura (13", 768–820 px de alto) */
+@media (min-width: 861px) and (max-height: 820px) {
+  .specs-dialog--sheet { max-height: calc(100dvh - 32px); }
+  .sheet__img { aspect-ratio: 4 / 3; }
+  .sheet__side { gap: 16px; }
+  .sheet__meta { gap: 10px; }
+  .sheet__main { padding-top: 32px; padding-bottom: 28px; }
+  .sheet__block { margin-top: 24px; }
+  .sheet__buy .btn, .sheet__buy .stepper { min-height: 48px; height: 48px; }
+}
+
+/* Tablet (≤ 860 px): una columna; foto y datos lado a lado debajo */
 @media (max-width: 860px) {
   .sheet { grid-template-columns: 1fr; }
-  .sheet__side { order: 2; border-right: 0; border-top: 1px solid var(--gray-line); }
-  .sheet__img { max-width: 260px; }
-  .sheet__main { padding: 40px 24px 32px; }
+  .sheet__main { padding: 40px 28px 32px; }
+  .sheet__side {
+    order: 2; display: grid; grid-template-columns: 200px 1fr; align-items: start; gap: 16px 24px;
+    padding: 28px; border-right: 0; border-top: 1px solid var(--gray-line);
+  }
+  .sheet__img { grid-row: span 3; aspect-ratio: 4 / 3; }
+  .sheet__docs { margin-top: 0; justify-content: flex-start; gap: 24px; }
 }
-@media (max-width: 480px) {
-  .sheet__side { padding: 24px 20px; }
-  .sheet__main { padding: 36px 20px 28px; }
+
+/* Celular (≤ 600 px): pantalla completa y secuencia vertical */
+@media (max-width: 600px) {
+  .specs-dialog--sheet {
+    width: 100%; max-width: 100%; height: 100dvh; max-height: 100dvh;
+    margin: 0; border: 0; border-radius: 0;
+  }
+  .sheet__main { padding: 64px 20px 28px; }
+  .sheet__main .specs-dialog__close {
+    position: fixed; top: 10px; right: 10px; z-index: 2;
+    background: var(--black-3); color: var(--white);
+  }
+  .sheet__title { padding-right: 0; font-size: 32px; }
+  .sheet__summary { font-size: 16px; }
+  .sheet__block { margin-top: 28px; }
+
+  .sheet__side { grid-template-columns: 1fr; padding: 24px 20px 32px; }
+  .sheet__img { grid-row: auto; max-width: none; }
+  .sheet__docs { justify-content: space-between; }
+
+  .mix { flex-wrap: wrap; font-size: 14px; }
+  .mix__part { padding: 12px; }
+
   .sheet__table div { grid-template-columns: 1fr; }
-  .sheet__table dt { padding-bottom: 0; font-size: 15px; }
-  .sheet__table dd { padding-top: 4px; font-size: 16px; }
+  .sheet__table dt { padding: 12px 14px 0; font-size: 14px; }
+  .sheet__table dd { padding: 4px 14px 12px; font-size: 15px; }
+
+  .steps { flex-direction: column; align-items: stretch; overflow: visible; }
+  .steps__item { flex-direction: column; align-items: stretch; }
+  .step { grid-template-columns: 1fr auto; align-items: center; }
+  .steps__gap {
+    align-self: flex-start; min-width: 0; min-height: 20px; margin-left: 22px; padding: 6px 0 6px 14px;
+    border-bottom: 0; border-left: 2px dashed var(--yellow);
+  }
 }
 
 .products__note { margin: 32px 0 0; color: var(--gray); font-size: 15px; }
