@@ -27,8 +27,8 @@ npm run build    # versión para publicar (carpeta dist/)
 | WhatsApp, correo y ciudad del distribuidor | `src/data/vehicolor.js` → `SITE` |
 | Productos, fichas técnicas y PDFs | `src/data/vehicolor.js` → `PRODUCTS` |
 | Formulario y mensaje de la cotización | `src/components/QuoteDrawer.jsx` |
-| Videos del hero | `public/videos/hero-horizontal.mp4` y `hero-vertical.mp4` |
-| Fotos de categorías, productos y secciones | `public/img/` (copiadas del sitio oficial de Vehicolor) |
+| Videos del hero | `public/videos/` → `hero-horizontal` y `hero-vertical`, cada uno en `.webm` y `.mp4` |
+| Fotos de categorías, productos y secciones | `public/img/` en `.webp` (copiadas del sitio oficial de Vehicolor) |
 | Colores y tipografías | `src/index.css` |
 | Estilos de las secciones | `src/App.css` |
 
@@ -40,3 +40,12 @@ npm run build    # versión para publicar (carpeta dist/)
 1. Poner el número real de WhatsApp y el correo en `SITE`. Ahorita son datos de prueba.
 2. Tener por escrito la autorización de Vehicolor como distribuidor y para usar su logo y sus fotos.
 3. Pedir a Vehicolor las TDS y MSDS de los primarios. Mientras tanto, esas tarjetas muestran el enlace "Solicitar fichas" por WhatsApp.
+
+## Cómo optimizar videos nuevos
+
+Si cambias un video del hero, genera las dos versiones sin audio con [ffmpeg](https://ffmpeg.org/):
+
+```bash
+ffmpeg -i original.mp4 -an -c:v libvpx-vp9 -crf 36 -b:v 0 -row-mt 1 public/videos/hero-horizontal.webm
+ffmpeg -i original.mp4 -an -c:v libx264 -crf 27 -preset slow -movflags +faststart public/videos/hero-horizontal.mp4
+```

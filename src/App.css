@@ -260,10 +260,16 @@
 
 @media (max-width: 900px) { .cat-cards { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 480px) {
+  /* Celular: el contador baja junto al nombre para no encimarse con el número */
   .cat-cards { gap: 10px; }
-  .cat-card { min-height: 160px; padding: 18px; }
-  .cat-card__count { top: 20px; right: 18px; font-size: 12px; }
-  .cat-card__arrow { right: 18px; bottom: 18px; }
+  .cat-card { min-height: 168px; padding: 16px; justify-content: flex-start; }
+  .cat-card__num { font-size: 44px; -webkit-text-stroke-width: 1.2px; }
+  .cat-card__count {
+    position: static; margin-top: auto; margin-bottom: 4px;
+    font-size: 11px; letter-spacing: .06em;
+  }
+  .cat-card__name { font-size: 16px; padding-right: 0; line-height: 1.15; }
+  .cat-card__arrow { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .cat-card, .cat-card *, .cat-card::after { transition: none; }

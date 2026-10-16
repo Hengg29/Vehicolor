@@ -2,9 +2,10 @@ import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import Icon from './Icon.jsx'
 import { SITE, waLink } from '../data/vehicolor.js'
 
+// WebM (VP9) es más ligero; el MP4 queda de respaldo para Safari viejito
 const VIDEOS = {
-  horizontal: '/videos/hero-horizontal.mp4',
-  vertical: '/videos/hero-vertical.mp4',
+  horizontal: '/videos/hero-horizontal',
+  vertical: '/videos/hero-vertical',
 }
 
 function useMedia(query) {
@@ -50,14 +51,16 @@ export default function Hero() {
         key={src}
         ref={videoRef}
         className="hero__video"
-        src={src}
         autoPlay={!paused}
         muted
         loop
         playsInline
         preload="metadata"
         aria-hidden="true"
-      />
+      >
+        <source src={`${src}.webm`} type="video/webm" />
+        <source src={`${src}.mp4`} type="video/mp4" />
+      </video>
       <div className="hero__overlay" aria-hidden="true" />
 
       <div className="container hero__content">

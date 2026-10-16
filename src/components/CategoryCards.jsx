@@ -19,7 +19,7 @@ export default function CategoryCards({ value, onChange }) {
           >
             <img className="cat-card__bg" src={c.img} alt="" loading="lazy" width="479" height="210" />
             <span className="cat-card__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
-            <span className="cat-card__count">{total} productos</span>
+            <span className="cat-card__count">{total} {total === 1 ? 'producto' : 'productos'}</span>
             <span className="cat-card__name">{c.name}</span>
             <span className="cat-card__arrow" aria-hidden="true"><Icon name="arrow" size={20} /></span>
           </button>

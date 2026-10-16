@@ -37,7 +37,7 @@ function ColorMatch() {
       <div className="container color__grid">
         <img
           className="color__img"
-          src="/img/secciones/igualacion-color.jpg"
+          src="/img/secciones/igualacion-color.webp"
           alt="Técnico igualando un color de pintura automotriz"
           loading="lazy"
           width="960"
