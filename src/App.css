@@ -96,7 +96,6 @@
   .nav.is-open { visibility: visible; opacity: 1; transform: none; }
   .nav a:not(.btn) { padding: 14px 0; border-bottom: 1px solid var(--gray-line); font-size: 17px; }
   .nav a:not(.btn)::after { display: none; }
-  .nav__cta { margin-top: 16px; }
 }
 
 /* ---------- Hero ---------- */
