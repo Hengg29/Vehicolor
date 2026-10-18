@@ -34,11 +34,12 @@ export function DocLinks({ p }) {
   )
 }
 
+// "Cotizar": agrega el producto y Vico muestra la notificación para preguntar la cantidad
 export function AddToQuote({ product, label = 'Agregar' }) {
-  const { items, add } = useQuote()
+  const { items, notify } = useQuote()
   if (items[product.id]) return <QtyStepper product={product} />
   return (
-    <button type="button" className="btn btn--yellow btn--sm" onClick={() => add(product.id)}>
+    <button type="button" className="btn btn--red btn--sm" onClick={() => notify(product.id)}>
       {label}
     </button>
   )

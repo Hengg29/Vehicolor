@@ -3,6 +3,7 @@ import { QuoteContext } from './QuoteContext.js'
 import { PRODUCTS } from '../data/vehicolor.js'
 
 const KEY = 'vehicolor-cotizacion'
+const INCOMING_KEY = 'vehicolor-avisos'
 const MAX_QTY = 999
 const VALID_IDS = new Set(PRODUCTS.map((p) => p.id))
 
@@ -18,13 +19,29 @@ function load() {
   }
 }
 
+// Avisos pendientes de Vico (productos agregados con "Cotizar" sin confirmar)
+function loadIncoming() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(INCOMING_KEY))
+    return Array.isArray(saved) ? [...new Set(saved.filter((id) => VALID_IDS.has(id)))] : []
+  } catch {
+    return []
+  }
+}
+
 export default function QuoteProvider({ children }) {
   const [items, setItems] = useState(load) // { [productId]: cantidad }
   const [open, setOpen] = useState(false)
+  // Productos que se agregaron con "Cotizar" y Vico todavía no muestra (globito de notificación)
+  const [incoming, setIncoming] = useState(loadIncoming)
 
   useEffect(() => {
     try { localStorage.setItem(KEY, JSON.stringify(items)) } catch { /* modo privado */ }
   }, [items])
+
+  useEffect(() => {
+    try { localStorage.setItem(INCOMING_KEY, JSON.stringify(incoming)) } catch { /* modo privado */ }
+  }, [incoming])
 
   const value = useMemo(() => {
     const setQty = (id, qty) => setItems((prev) => {
@@ -44,8 +61,15 @@ export default function QuoteProvider({ children }) {
       clear: () => setItems({}),
       open,
       setOpen,
+      incoming,
+      // Botón "Cotizar": lo agrega con 1 pieza (si no estaba) y avisa a Vico para preguntar la cantidad
+      notify: (id) => {
+        if (!items[id]) setQty(id, 1)
+        setIncoming((list) => (list.includes(id) ? list : [...list, id]))
+      },
+      dismissIncoming: (id) => setIncoming((list) => list.filter((x) => x !== id)),
     }
-  }, [items, open])
+  }, [items, open, incoming])
 
   return <QuoteContext.Provider value={value}>{children}</QuoteContext.Provider>
 }

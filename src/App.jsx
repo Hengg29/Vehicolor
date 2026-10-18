@@ -5,7 +5,6 @@ import Stats from './components/Stats.jsx'
 import Products from './components/Products.jsx'
 import Icon from './components/Icon.jsx'
 import Pillars from './components/Pillars.jsx'
-import QuoteDrawer from './components/QuoteDrawer.jsx'
 import Splash from './components/Splash.jsx'
 import Vico from './components/Vico.jsx'
 import { useQuote } from './quote/QuoteContext.js'
@@ -53,11 +52,11 @@ function Contact() {
       <div className="container cta__inner">
         <div>
           <h2 className="cta__title">¿Listo para cotizar?</h2>
-          <p>Agrega los productos con sus cantidades, llena tus datos y mándanos el pedido por WhatsApp. Te respondemos con precio y disponibilidad.</p>
+          <p>Vico, nuestro asistente, te ayuda a escoger productos y cantidades, y te manda la orden por WhatsApp. Te respondemos con precio y disponibilidad.</p>
         </div>
         <div className="cta__actions">
           <button type="button" className="btn btn--black btn--lg" onClick={() => setOpen(true)}>
-            <Icon name="list" size={20} /> Ver mi cotización
+            <Icon name="chat" size={20} /> Cotizar con Vico
           </button>
           <a className="cta__link" href={waLink()} target="_blank" rel="noreferrer">
             ¿Dudas? Escríbenos por WhatsApp
@@ -68,16 +67,6 @@ function Contact() {
   )
 }
 
-// Botón flotante: aparece cuando hay productos en la cotización
-function QuoteFab() {
-  const { count, open, setOpen } = useQuote()
-  if (!count || open) return null
-  return (
-    <button type="button" className="fab" onClick={() => setOpen(true)}>
-      <Icon name="list" size={20} /> Ver cotización <span className="badge badge--dark">{count}</span>
-    </button>
-  )
-}
 
 function Footer() {
   return (
@@ -111,8 +100,6 @@ export default function App() {
         <Contact />
       </main>
       <Footer />
-      <QuoteFab />
-      <QuoteDrawer />
       <Vico />
     </>
   )
