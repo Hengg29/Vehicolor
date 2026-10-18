@@ -68,6 +68,7 @@ export default function QuoteProvider({ children }) {
         setIncoming((list) => (list.includes(id) ? list : [...list, id]))
       },
       dismissIncoming: (id) => setIncoming((list) => list.filter((x) => x !== id)),
+      clearIncoming: () => setIncoming([]),
     }
   }, [items, open, incoming])
 

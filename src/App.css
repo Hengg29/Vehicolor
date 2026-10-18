@@ -1001,6 +1001,16 @@
 .vico-chip.is-active { background: var(--red); border-color: var(--red); color: var(--white); }
 .vico-card__row { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; }
 .vico-card__row .btn:disabled { opacity: .45; cursor: not-allowed; }
+.vico-card__cancel {
+  display: flex; align-items: center; gap: 6px; margin: 8px auto 0; min-height: 36px; padding: 0 8px;
+  background: none; border: 0; cursor: pointer;
+  font: 500 13px var(--font-body); color: var(--gray-text); text-decoration: underline; text-underline-offset: 3px;
+}
+.vico-card__cancel:hover { color: var(--red-dark); }
+.vico-chat__links { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px 16px; }
+.vico-chat__link--cancel { color: var(--gray-text); }
+.vico-chat__link--cancel:hover,
+.vico-chat__link--cancel.is-armed { color: var(--red-dark); font-weight: 700; }
 .vico-card__qty { display: flex; align-items: center; gap: 6px; margin: 4px 0 0; font: 700 14px var(--font-heading); color: #1c7a3e; }
 
 /* Ya confirmada: versión compacta */
@@ -1271,4 +1281,85 @@ html.vico-lock, html.vico-lock body { overflow: hidden; }
   .pcard__actions { flex-wrap: wrap; }
   .pcard__actions > * { flex: 1 1 100%; }
   .pcard__docs { padding: 8px 16px; }
+}
+
+/* ---- Vico por dentro: tarjeta, lista de casillas y resumen ---- */
+
+/* Monitor grande (≥ 1920 px) */
+@media (min-width: 1920px) {
+  .vico-msg__bubble { font-size: 16px; }
+  .vico-card__head img { width: 112px; height: 84px; }
+  .vico-card__name { font-size: 18px; }
+  .vico-card__text, .vico-summary__data, .vico-summary__items li { font-size: 15px; }
+  .vico-chip { min-width: 48px; height: 44px; font-size: 16px; }
+  .vico .stepper { height: 44px; }
+  .vico-pick__label img { width: 52px; height: 39px; }
+  .vico-pick__text strong { font-size: 15px; }
+  .vico-chat__form input, .vico-chat__send { min-height: 54px; }
+}
+
+/* Monitor mediano (1440–1919 px) */
+@media (min-width: 1440px) and (max-width: 1919px) {
+  .vico-card__head img { width: 104px; height: 78px; }
+  .vico-card__name { font-size: 17px; }
+}
+
+/* Laptops con poca altura: la descripción se corta a 2 líneas para que la tarjeta quepa */
+@media (min-width: 1024px) and (max-height: 800px) {
+  .vico-chat__list { padding: 14px; gap: 10px; }
+  .vico-card__text {
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; line-clamp: 2; overflow: hidden;
+  }
+  .vico-card__ask { margin-top: 10px; }
+}
+
+/* Tablet (601–1023 px) */
+@media (min-width: 601px) and (max-width: 1023px) {
+  .vico__btn { width: 80px; height: 80px; }
+}
+
+/* Celular (≤ 600 px) */
+@media (max-width: 600px) {
+  .vico-card__row .stepper { flex: 1; display: flex; }
+  .vico-card__row .stepper input { flex: 1; width: auto; }
+  .vico-card__row .btn { flex: 1; min-height: 44px; }
+  .vico-card__cancel { min-height: 44px; }
+
+  .vico-pick { padding: 8px 6px; }
+  .vico-pick__label { flex-basis: 100%; }
+  .vico-pick .stepper { margin-left: 34px; } /* debajo del nombre, alineado con la casilla */
+
+  /* Resumen: dato debajo de su etiqueta para que las direcciones largas se lean bien */
+  .vico-summary { padding: 14px; }
+  .vico-summary__data div { flex-direction: column; gap: 0; }
+  .vico-summary__data dd { text-align: left; }
+
+  .vico-chat__links { flex-direction: column; align-items: center; gap: 0; }
+  .vico-chat__link { min-height: 44px; }
+}
+
+/* Celulares chicos (≤ 360 px) */
+@media (max-width: 360px) {
+  .vico-card__head { padding: 10px; gap: 10px; }
+  .vico-card__head img { width: 72px; height: 54px; }
+  .vico-card__name { font-size: 15px; }
+  .vico-card__body { padding: 0 10px 12px; }
+  .vico-chips { gap: 4px; }
+  .vico-chip { min-width: 0; flex: 1; padding: 0 6px; height: 38px; font-size: 14px; }
+  .vico-card__row { flex-direction: column; align-items: stretch; }
+  .vico-pick__label img { display: none; }
+  .vico-summary__items img { width: 36px; height: 27px; }
+  .vico-summary__items li { font-size: 13px; }
+}
+
+/* Celular acostado: el chat ocupa toda la pantalla para que no quede chaparro */
+@media (max-height: 500px) and (orientation: landscape) and (max-width: 1023px) {
+  .vico.is-open { inset: 0; z-index: 60; }
+  .vico.is-open .vico__launch { display: none; }
+  .vico.is-open .vico-chat { width: 100%; height: 100dvh; border-radius: 0; animation: none; }
+  .vico-chat__head { padding: 8px 12px 8px 16px; }
+  .vico-chat__avatar { width: 40px; height: 40px; }
+  .vico-chat__head p { display: none; }
+  .vico-chat__note { display: none; }
+  .vico__btn { width: 64px; height: 64px; }
 }

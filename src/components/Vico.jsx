@@ -75,7 +75,7 @@ function buildMessage(d, lines) {
 /* ---------- Piezas del chat ---------- */
 
 // Tarjeta del producto que se agregó con "Cotizar": foto, datos y cantidad
-function ProductCard({ product, pending, onConfirm, confirmedQty }) {
+function ProductCard({ product, pending, onConfirm, onCancel, confirmedQty }) {
   const { items, setQty } = useQuote()
   const qty = pending ? items[product.id] || 0 : confirmedQty
   const category = CATEGORIES.find((c) => c.id === product.cat)?.name
@@ -116,6 +116,9 @@ function ProductCard({ product, pending, onConfirm, confirmedQty }) {
               <Icon name="check" size={16} /> Confirmar
             </button>
           </div>
+          <button type="button" className="vico-card__cancel" onClick={() => onCancel(product.id)}>
+            <Icon name="trash" size={15} /> Eliminar producto
+          </button>
         </div>
       )}
     </div>
@@ -200,7 +203,8 @@ function Summary({ data }) {
 
 /* ---------- Vico ---------- */
 
-const START = () => promptFor('cliente', {})
+// Saludo + pregunta del nombre (marcados con `start` para saber si la plática ya empezó)
+const START = () => promptFor('cliente', {}).map((m) => ({ ...m, start: true }))
 
 // La plática se guarda en el navegador para que no se pierda al recargar; caduca a los 7 días
 const STORE_KEY = 'vico-chat'
@@ -236,11 +240,16 @@ export default function Vico() {
   const [value, setValue] = useState('')
   const [error, setError] = useState(null)
   const [locating, setLocating] = useState(false)
+  const [confirmCancel, setConfirmCancel] = useState(false)
   const rootRef = useRef(null)
   const listRef = useRef(null)
   const inputRef = useRef(null)
   const step = TEXT_STEPS[phase]
   const lastAdded = byId[incoming[incoming.length - 1]]
+  // Hay productos agregados con "Cotizar" esperando su cantidad: primero se confirman
+  const waiting = incoming.length > 0
+  // La plática aún no empieza (solo está el saludo): si llegó por "Cotizar", no se pregunta el nombre todavía
+  const untouched = messages.every((m) => m.start)
 
   useEffect(() => {
     try {
@@ -253,8 +262,8 @@ export default function Vico() {
   }, [messages, open, incoming])
 
   useEffect(() => {
-    if (open && step) inputRef.current?.focus()
-  }, [open, step])
+    if (open && step && !waiting) inputRef.current?.focus()
+  }, [open, step, waiting])
 
   // Celular: el chat ocupa solo el área visible (sin el teclado) y la página de atrás no se mueve
   useEffect(() => {
@@ -354,23 +363,75 @@ export default function Vico() {
   const onCardConfirm = (id) => {
     const product = byId[id]
     const qty = quote.items[id] || 0
+    const remaining = incoming.filter((x) => x !== id).length
     quote.dismissIncoming(id)
-    const card = msg({ type: 'product', productId: id, qty })
-    const answer = msg({ from: 'user', text: `${qty} × ${product.name}` })
-    const ok = msg({ text: '¡Anotado! ✅' })
 
-    if (phase === 'sent') {
-      // Ya se había enviado una orden: arranca una nueva con este producto
+    const confirmed = [
+      msg({ type: 'product', productId: id, qty }),
+      msg({ from: 'user', text: `${qty} × ${product.name}` }),
+    ]
+    // Orden ya enviada → arranca una nueva; plática sin empezar → se quita el saludo y se pone al final
+    const restarting = phase === 'sent'
+    const before = restarting || untouched ? [] : messages
+    if (restarting) {
       setPhase('cliente')
       setData({})
-      setMessages([card, answer, msg({ text: '¡Anotado! ✅ Empecemos una nueva cotización.' }), ...START()])
+      setEditing(false)
+    }
+    const greeted = before.some((m) => m.start)
+
+    let next
+    if (remaining) {
+      // Todavía faltan tarjetas: Vico no pregunta nada más hasta confirmarlas todas
+      next = [msg({ text: `¡Anotado! ✅ Te falta confirmar ${remaining} producto${remaining > 1 ? 's' : ''} 👇` })]
+    } else if (!greeted) {
+      next = [msg({ text: restarting ? '¡Anotado! ✅ Empecemos una nueva cotización.' : '¡Anotado! ✅' }), ...START()]
+    } else {
+      const current = restarting ? 'cliente' : phase
+      next = [
+        msg({ text: '¡Anotado! ✅' }),
+        ...(TEXT_STEPS[current] ? [msg({ text: `Sigamos: ${askText(current, data)}` })]
+          : current === 'confirm' ? [msg({ text: 'Ya actualicé tu orden 👆' })]
+            : []),
+      ]
+    }
+    setMessages([...before, ...confirmed, ...next])
+  }
+
+
+  // "Eliminar producto": lo quita sin confirmarlo
+  const onCardCancel = (id) => {
+    const remaining = incoming.filter((x) => x !== id).length
+    quote.remove(id)
+    quote.dismissIncoming(id)
+
+    const note = msg({
+      text: `Listo, eliminé ${byId[id].name} de tu cotización.${remaining ? ` Te falta confirmar ${remaining} producto${remaining > 1 ? 's' : ''} 👇` : ''}`,
+    })
+    if (remaining || phase === 'sent') {
+      setMessages((m) => [...m, note])
+    } else if (untouched) {
+      // No había empezado la plática: el aviso va antes del saludo
+      setMessages((m) => [note, ...m])
+    } else {
+      const resume =
+        TEXT_STEPS[phase] ? [msg({ text: `Sigamos: ${askText(phase, data)}` })]
+          : phase === 'confirm' ? [msg({ text: 'Ya actualicé tu orden 👆' })]
+            : []
+      setMessages((m) => [...m, note, ...resume])
+    }
+  }
+
+  // "Eliminar cotización": pide un segundo toque para confirmar y luego borra todo
+  const cancelQuote = () => {
+    if (!confirmCancel) {
+      setConfirmCancel(true)
       return
     }
-    const resume =
-      TEXT_STEPS[phase] ? [msg({ text: `Sigamos: ${askText(phase, data)}` })]
-        : phase === 'confirm' ? [msg({ text: 'Ya actualicé tu orden 👆' })]
-          : []
-    setMessages((m) => [...m, card, answer, ok, ...resume])
+    quote.clear()
+    quote.clearIncoming()
+    restart()
+    setMessages((m) => [msg({ text: 'Eliminé la cotización. Cuando quieras empezamos otra. 🐾' }), ...m])
   }
 
   const editProducts = () => {
@@ -386,6 +447,7 @@ export default function Vico() {
   }
 
   const restart = () => {
+    setConfirmCancel(false)
     setPhase('cliente')
     setData({})
     setEditing(false)
@@ -412,6 +474,7 @@ export default function Vico() {
           <ol ref={listRef} className="vico-chat__list" aria-live="polite">
             {messages.map((m) => {
               if (m.type === 'picker' && m.done) return null
+              if (m.start && untouched && waiting) return null
               const wide = m.type !== 'text'
               return (
                 <li key={m.id} className={`vico-msg vico-msg--${m.from}${wide ? ' vico-msg--wide' : ''}`}>
@@ -430,14 +493,15 @@ export default function Vico() {
                 <img className="vico-msg__avatar" src={AVATAR} alt="" width="36" height="36" />
                 <div className="vico-msg__stack">
                   <p className="vico-msg__bubble">¡Buena elección! Agregaste este producto:</p>
-                  <ProductCard product={byId[id]} pending onConfirm={onCardConfirm} />
+                  <ProductCard product={byId[id]} pending onConfirm={onCardConfirm} onCancel={onCardCancel} />
                 </div>
               </li>
             ))}
           </ol>
 
           <footer className="vico-chat__foot">
-            {step && (
+            {waiting && <p className="vico-chat__hint">Confirma la cantidad de {incoming.length > 1 ? 'tus productos' : 'tu producto'} arriba 👆</p>}
+            {!waiting && step && (
               <form className="vico-chat__form" onSubmit={onSubmit} noValidate>
                 <label htmlFor="vico-input" className="sr-only">{askText(phase, data)}</label>
                 <input
@@ -456,28 +520,38 @@ export default function Vico() {
                 </button>
               </form>
             )}
-            {step?.geo && (
+            {!waiting && step?.geo && (
               <button type="button" className="vico-geo" onClick={shareLocation} disabled={locating}>
                 <Icon name="pin" size={18} /> {locating ? 'Buscando tu ubicación…' : 'Usar mi ubicación actual'}
               </button>
             )}
-            {phase === 'productos' && <p className="vico-chat__hint">Marca tus productos arriba y toca “{editing ? 'Listo' : 'Continuar'}”.</p>}
-            {phase === 'confirm' && (
+            {!waiting && phase === 'productos' && <p className="vico-chat__hint">Marca tus productos arriba y toca “{editing ? 'Listo' : 'Continuar'}”.</p>}
+            {!waiting && phase === 'confirm' && (
               <div className="vico-chat__actions">
                 <button type="button" className="btn btn--red btn--block" disabled={!count} onClick={send}>
                   <Icon name="chat" size={20} /> Confirmar y enviar por WhatsApp
                 </button>
-                <button type="button" className="vico-chat__link" onClick={editProducts}>Cambiar productos</button>
+                <div className="vico-chat__links">
+                  <button type="button" className="vico-chat__link" onClick={editProducts}>Cambiar productos</button>
+                  <button
+                    type="button"
+                    className={`vico-chat__link vico-chat__link--cancel${confirmCancel ? ' is-armed' : ''}`}
+                    onClick={cancelQuote}
+                    onBlur={() => setConfirmCancel(false)}
+                  >
+                    {confirmCancel ? '¿Seguro? Toca otra vez para eliminarla' : 'Eliminar cotización'}
+                  </button>
+                </div>
               </div>
             )}
-            {phase === 'sent' && (
+            {!waiting && phase === 'sent' && (
               <div className="vico-chat__actions">
                 <button type="button" className="btn btn--red btn--block" onClick={restart}>Hacer otra cotización</button>
               </div>
             )}
             {error
               ? <p id="vico-error" className="vico-chat__error">{error}</p>
-              : step && <p className="vico-chat__note">Tus datos solo se usan para atender tu solicitud.</p>}
+              : !waiting && step && <p className="vico-chat__note">Tus datos solo se usan para atender tu solicitud.</p>}
           </footer>
         </section>
       )}
