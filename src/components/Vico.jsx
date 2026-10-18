@@ -66,6 +66,7 @@ export default function Vico() {
   const [messages, setMessages] = useState(firstMessage)
   const [value, setValue] = useState('')
   const [error, setError] = useState(null)
+  const rootRef = useRef(null)
   const listRef = useRef(null)
   const inputRef = useRef(null)
   const done = step >= STEPS.length
@@ -77,6 +78,27 @@ export default function Vico() {
   useEffect(() => {
     if (open && !done) inputRef.current?.focus()
   }, [open, step, done])
+
+  // Celular: el chat ocupa solo el área visible (sin el teclado) y la página de atrás no se mueve
+  useEffect(() => {
+    const vv = window.visualViewport
+    if (!open || !vv || !window.matchMedia('(max-width: 600px)').matches) return
+    const root = rootRef.current
+    const fit = () => {
+      root.style.setProperty('--vv-top', `${vv.offsetTop}px`)
+      root.style.setProperty('--vv-h', `${vv.height}px`)
+      listRef.current?.scrollTo({ top: listRef.current.scrollHeight })
+    }
+    fit()
+    vv.addEventListener('resize', fit)
+    vv.addEventListener('scroll', fit)
+    document.documentElement.classList.add('vico-lock')
+    return () => {
+      vv.removeEventListener('resize', fit)
+      vv.removeEventListener('scroll', fit)
+      document.documentElement.classList.remove('vico-lock')
+    }
+  }, [open])
 
   useEffect(() => {
     if (!open) return
@@ -125,7 +147,7 @@ export default function Vico() {
   if (count > 0) return null
 
   return (
-    <div className="vico">
+    <div ref={rootRef} className={`vico${open ? ' is-open' : ''}`}>
       {open && (
         <section className="vico-chat" role="dialog" aria-labelledby="vico-title">
           <header className="vico-chat__head">

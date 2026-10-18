@@ -1032,11 +1032,27 @@
   font: 500 14px var(--font-body); color: var(--red-dark); text-decoration: underline;
 }
 
-@media (max-width: 560px) {
+@media (max-width: 600px) {
   .vico__btn { width: 72px; height: 72px; }
   .vico__bubble { font-size: 13px; }
-  .vico-chat { height: min(560px, 100dvh - 120px); }
+
+  /* Abierto: pantalla completa encima del header, del tamaño del área visible sobre el teclado */
+  .vico.is-open { inset: var(--vv-top, 0px) 0 auto 0; z-index: 60; }
+  .vico.is-open .vico__launch { display: none; }
+  .vico.is-open .vico-chat {
+    width: 100%; height: var(--vv-h, 100dvh);
+    border-radius: 0; box-shadow: none; animation: none;
+  }
+  .vico-chat__head { padding: max(12px, env(safe-area-inset-top)) 12px 12px 16px; gap: 12px; }
+  .vico-chat__avatar { width: 46px; height: 46px; }
+  .vico-chat__head h2 { font-size: 18px; }
+  .vico-chat__head p { font-size: 13px; }
+  .vico-chat__list { padding: 16px 12px; overscroll-behavior: contain; }
+  .vico-msg__bubble { max-width: 82%; }
+  .vico-chat__foot { padding: 10px 12px max(10px, env(safe-area-inset-bottom)); }
+  .vico-chat__note { display: none; }
 }
+html.vico-lock, html.vico-lock body { overflow: hidden; }
 @media (prefers-reduced-motion: reduce) {
   .vico__bubble, .vico-msg, .vico-chat { animation: none; }
   .vico__btn:hover { transform: none; }
