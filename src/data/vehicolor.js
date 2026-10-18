@@ -21,10 +21,10 @@ export const STATS = [
 ]
 
 export const BENEFITS = [
-  { icon: 'shield', title: 'Calidad', text: 'Bases, barnices y primarios con fichas técnicas y hojas de seguridad publicadas.' },
-  { icon: 'zap', title: 'Eficiencia', text: 'Mezclas simples y tiempos de secado cortos para sacar más trabajos al día.' },
-  { icon: 'palette', title: 'Tecnología', text: 'Igualación de color con espectrofotómetro y más de 120,000 fórmulas.' },
-  { icon: 'headset', title: 'Servicio', text: 'Atención local, asesoría de aplicación y cotización directa por WhatsApp.' },
+  { icon: 'shield', stat: 'TDS + MSDS', statLabel: 'Publicadas por producto', title: 'Calidad', text: 'Bases, barnices y primarios con fichas técnicas y hojas de seguridad publicadas.' },
+  { icon: 'zap', stat: '1:1', statLabel: 'Mezcla en bases 1K', title: 'Eficiencia', text: 'Mezclas simples y tiempos de secado cortos para sacar más trabajos al día.' },
+  { icon: 'palette', stat: '120,000+', statLabel: 'Fórmulas de color', title: 'Tecnología', text: 'Igualación de color con espectrofotómetro y más de 120,000 fórmulas.' },
+  { icon: 'headset', stat: 'WhatsApp', statLabel: 'Cotización directa', title: 'Servicio', text: 'Atención local, asesoría de aplicación y cotización directa por WhatsApp.' },
 ]
 
 export const CATEGORIES = [

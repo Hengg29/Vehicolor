@@ -21,6 +21,7 @@
 
   --font-heading: 'Montserrat', Arial, sans-serif;
   --font-body: 'Roboto', Verdana, Helvetica, sans-serif;
+  --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
   --container: 1200px;
   --header-h: 76px;

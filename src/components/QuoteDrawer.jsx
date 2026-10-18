@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import Field from './Field.jsx'
 import Icon from './Icon.jsx'
 import QtyStepper from './QtyStepper.jsx'
 import { useQuote } from '../quote/QuoteContext.js'
@@ -27,23 +28,6 @@ function buildMessage(form, lines) {
     ...lines.map(({ product, qty }) => `• ${qty} × ${product.name} (${product.en})`),
     ...(form.notas.trim() ? ['', `*Notas:* ${form.notas.trim()}`] : []),
   ].join('\n')
-}
-
-function Field({ id, label, error, multiline, ...props }) {
-  const Tag = multiline ? 'textarea' : 'input'
-  return (
-    <div className="field">
-      <label htmlFor={id}>{label}</label>
-      <Tag
-        id={id}
-        name={id}
-        aria-invalid={error ? 'true' : undefined}
-        aria-describedby={error ? `${id}-error` : undefined}
-        {...props}
-      />
-      {error && <p id={`${id}-error`} className="field__error">{error}</p>}
-    </div>
-  )
 }
 
 export default function QuoteDrawer() {

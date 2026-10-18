@@ -4,34 +4,14 @@ import Hero from './components/Hero.jsx'
 import Stats from './components/Stats.jsx'
 import Products from './components/Products.jsx'
 import Icon from './components/Icon.jsx'
+import Pillars from './components/Pillars.jsx'
 import QuoteDrawer from './components/QuoteDrawer.jsx'
 import Splash from './components/Splash.jsx'
+import Vico from './components/Vico.jsx'
 import { useQuote } from './quote/QuoteContext.js'
 import logo from './assets/logo-vehicolor-blanco.png'
-import { BENEFITS, SITE, waLink } from './data/vehicolor.js'
+import { SITE, waLink } from './data/vehicolor.js'
 import './App.css'
-
-function Benefits() {
-  return (
-    <section id="beneficios" className="section section--light">
-      <div className="container">
-        <header className="section__head">
-          <p className="eyebrow eyebrow--dark"><span className="eyebrow__bar" aria-hidden="true" />Por qué Vehicolor</p>
-          <h2 className="section__title">Cuatro pilares para tu taller</h2>
-        </header>
-        <div className="benefits">
-          {BENEFITS.map((b) => (
-            <article key={b.title} className="benefit">
-              <span className="benefit__icon"><Icon name={b.icon} size={28} /></span>
-              <h3>{b.title}</h3>
-              <p>{b.text}</p>
-            </article>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
 
 function ColorMatch() {
   return (
@@ -126,13 +106,14 @@ export default function App() {
         <Hero onReady={onVideoReady} />
         <Stats />
         <Products />
-        <Benefits />
+        <Pillars />
         <ColorMatch />
         <Contact />
       </main>
       <Footer />
       <QuoteFab />
       <QuoteDrawer />
+      <Vico />
     </>
   )
 }
