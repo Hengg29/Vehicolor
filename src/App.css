@@ -1047,6 +1047,22 @@
 .vico-pick__text strong { font: 600 14px var(--font-heading); }
 .vico-pick__text small { font-size: 12px; color: var(--gray-text); }
 .vico-pick .stepper { margin-left: auto; }
+.vico-pick__icon {
+  width: 44px; height: 33px; flex-shrink: 0; display: grid; place-items: center;
+  background: #fff1f1; color: var(--red); border: 1px dashed #e9b4b4; border-radius: 6px;
+}
+.vico-summary__items .vico-pick__icon { flex: 0 0 44px; width: 44px; height: 33px; }
+.vico-summary__data a { display: inline-block; white-space: nowrap; }
+.vico-pick__otro {
+  flex: 1 1 100%; width: 100%; min-height: 64px; margin: 4px 0 2px; padding: 10px 12px;
+  background: var(--white); color: var(--vico-text);
+  border: 2px solid var(--vico-line); border-radius: 10px;
+  font: 15px/1.4 var(--font-body); resize: vertical;
+}
+.vico-pick__otro:focus { outline: none; border-color: var(--red); box-shadow: 0 0 0 3px rgba(216, 24, 24, .15); }
+.vico-pick__otro::placeholder { color: #7a7e86; }
+.vico-pick--otro .vico-pick__label { min-height: 44px; }
+.vico-summary__items b { font-weight: 700; }
 .vico-picker__go { margin-top: 12px; }
 .vico-picker__go:disabled { opacity: .5; cursor: not-allowed; }
 
@@ -1362,4 +1378,29 @@ html.vico-lock, html.vico-lock body { overflow: hidden; }
   .vico-chat__head p { display: none; }
   .vico-chat__note { display: none; }
   .vico__btn { width: 64px; height: 64px; }
+}
+
+/* ---- Vico: "Otro" e igualación de pintura en cada tamaño ---- */
+@media (min-width: 1920px) {
+  .vico-pick__icon,
+  .vico-summary__items .vico-pick__icon { flex-basis: 52px; width: 52px; height: 39px; }
+  .vico-summary__items img { width: 52px; height: 39px; }
+  .vico-pick__otro { font-size: 16px; min-height: 72px; }
+}
+
+@media (min-width: 1024px) and (max-height: 800px) {
+  .vico-pick__otro { min-height: 52px; }
+}
+
+@media (max-width: 600px) {
+  /* 16 px evita que iPhone haga zoom al escribir */
+  .vico-pick__otro { font-size: 16px; margin-left: 34px; width: calc(100% - 34px); flex-basis: calc(100% - 34px); }
+  .vico-summary__items li { align-items: flex-start; }
+  .vico-summary__items li span:last-of-type { overflow-wrap: anywhere; }
+}
+
+@media (max-width: 360px) {
+  .vico-pick__icon { display: none; }
+  .vico-pick__otro { margin-left: 0; width: 100%; flex-basis: 100%; }
+  .vico-summary__items .vico-pick__icon { flex-basis: 36px; width: 36px; height: 27px; }
 }

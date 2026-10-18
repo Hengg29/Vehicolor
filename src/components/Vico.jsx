@@ -2,13 +2,13 @@ import { useEffect, useRef, useState } from 'react'
 import Icon from './Icon.jsx'
 import QtyStepper from './QtyStepper.jsx'
 import { useQuote } from '../quote/QuoteContext.js'
-import { CATEGORIES, PRODUCTS, waLink } from '../data/vehicolor.js'
+import { CATEGORIES, PRODUCTS, QUOTABLE, SERVICES, unitLabel, waLink } from '../data/vehicolor.js'
 
 // Asistente virtual: pide los datos uno por uno, deja escoger productos con casillas
 // y cantidad, y al final muestra la orden para confirmarla y mandarla por WhatsApp.
 const AVATAR = '/img/vico.webp'
 const digits = (s) => s.replace(/\D/g, '')
-const byId = Object.fromEntries(PRODUCTS.map((p) => [p.id, p]))
+const byId = Object.fromEntries(QUOTABLE.map((p) => [p.id, p]))
 const QUICK_QTY = [1, 2, 3, 5, 10]
 
 // Pasos donde Vico espera texto
@@ -56,7 +56,8 @@ function promptFor(phase, data) {
   return []
 }
 
-const linesText = (lines) => lines.map(({ product, qty }) => `${qty} × ${product.name}`).join('\n')
+const linesText = (lines, otro) =>
+  [...lines.map(({ product, qty }) => `${qty} × ${product.name}`), ...(otro ? [`Otro: ${otro}`] : [])].join('\n')
 
 function buildMessage(d, lines) {
   return [
@@ -69,6 +70,7 @@ function buildMessage(d, lines) {
     '',
     '*Productos:*',
     ...lines.map(({ product, qty }) => `• ${qty} × ${product.name} (${product.en})`),
+    ...(d.otro ? [`• Otro: ${d.otro}`] : []),
   ].join('\n')
 }
 
@@ -78,7 +80,7 @@ function buildMessage(d, lines) {
 function ProductCard({ product, pending, onConfirm, onCancel, confirmedQty }) {
   const { items, setQty } = useQuote()
   const qty = pending ? items[product.id] || 0 : confirmedQty
-  const category = CATEGORIES.find((c) => c.id === product.cat)?.name
+  const category = product.tag || CATEGORIES.find((c) => c.id === product.cat)?.name
 
   return (
     <div className={`vico-card${pending ? '' : ' vico-card--done'}`}>
@@ -89,14 +91,14 @@ function ProductCard({ product, pending, onConfirm, onCancel, confirmedQty }) {
           {category && <span className="vico-card__tag">{category}</span>}
           <h3 className="vico-card__name">{product.name}</h3>
           <p className="vico-card__en">{product.en}</p>
-          {!pending && <p className="vico-card__qty"><Icon name="check" size={16} /> {qty} {qty === 1 ? 'pieza' : 'piezas'}</p>}
+          {!pending && <p className="vico-card__qty"><Icon name="check" size={16} /> {unitLabel(product, qty)}</p>}
         </div>
       </div>
 
       {pending && (
         <div className="vico-card__body">
           <p className="vico-card__text">{product.summary}</p>
-          <p className="vico-card__ask">¿Cuántas piezas ocupas?</p>
+          <p className="vico-card__ask">{product.ask || '¿Cuántas piezas ocupas?'}</p>
           <div className="vico-chips" role="group" aria-label="Cantidades rápidas">
             {QUICK_QTY.map((n) => (
               <button
@@ -126,40 +128,83 @@ function ProductCard({ product, pending, onConfirm, onCancel, confirmedQty }) {
 }
 
 // Lista de productos con casillas y cantidad, agrupada por categoría
-function Picker({ onContinue, editing }) {
-  const { items, setQty, remove, count } = useQuote()
+function PickRow({ item }) {
+  const { items, setQty, remove } = useQuote()
+  const checked = Boolean(items[item.id])
+  return (
+    <div className={`vico-pick${checked ? ' is-checked' : ''}`}>
+      <label className="vico-pick__label">
+        <input
+          type="checkbox"
+          checked={checked}
+          onChange={(e) => (e.target.checked ? setQty(item.id, 1) : remove(item.id))}
+        />
+        <span className="vico-pick__box" aria-hidden="true"><Icon name="check" size={14} /></span>
+        <img src={item.img} alt="" width="44" height="33" />
+        <span className="vico-pick__text">
+          <strong>{item.name}</strong>
+          <small>{item.en}</small>
+        </span>
+      </label>
+      {checked && <QtyStepper product={item} />}
+    </div>
+  )
+}
+
+// Lista de productos con casillas y cantidad, agrupada por categoría; al final servicios y "Otro"
+function Picker({ onContinue, editing, otro, onOtroChange }) {
+  const { count } = useQuote()
+  const otroOn = otro != null
+  const otroText = otro?.trim()
+  const ready = count > 0 || Boolean(otroText)
 
   return (
     <div className="vico-picker">
       {CATEGORIES.map((c) => (
         <fieldset key={c.id} className="vico-picker__group">
           <legend>{c.name}</legend>
-          {PRODUCTS.filter((p) => p.cat === c.id).map((p) => {
-            const checked = Boolean(items[p.id])
-            return (
-              <div key={p.id} className={`vico-pick${checked ? ' is-checked' : ''}`}>
-                <label className="vico-pick__label">
-                  <input
-                    type="checkbox"
-                    checked={checked}
-                    onChange={(e) => (e.target.checked ? setQty(p.id, 1) : remove(p.id))}
-                  />
-                  <span className="vico-pick__box" aria-hidden="true"><Icon name="check" size={14} /></span>
-                  <img src={p.img} alt="" width="44" height="33" />
-                  <span className="vico-pick__text">
-                    <strong>{p.name}</strong>
-                    <small>{p.en}</small>
-                  </span>
-                </label>
-                {checked && <QtyStepper product={p} />}
-              </div>
-            )
-          })}
+          {PRODUCTS.filter((p) => p.cat === c.id).map((p) => <PickRow key={p.id} item={p} />)}
         </fieldset>
       ))}
-      <button type="button" className="btn btn--red btn--block vico-picker__go" disabled={!count} onClick={onContinue}>
-        {count
-          ? `${editing ? 'Listo' : 'Continuar'} · ${count} ${count === 1 ? 'pieza' : 'piezas'}`
+
+      <fieldset className="vico-picker__group">
+        <legend>Servicios</legend>
+        {SERVICES.map((s) => <PickRow key={s.id} item={s} />)}
+      </fieldset>
+
+      <fieldset className="vico-picker__group">
+        <legend>¿No está en la lista?</legend>
+        <div className={`vico-pick vico-pick--otro${otroOn ? ' is-checked' : ''}`}>
+          <label className="vico-pick__label">
+            <input type="checkbox" checked={otroOn} onChange={(e) => onOtroChange(e.target.checked ? '' : null)} />
+            <span className="vico-pick__box" aria-hidden="true"><Icon name="check" size={14} /></span>
+            <span className="vico-pick__icon" aria-hidden="true"><Icon name="list" size={20} /></span>
+            <span className="vico-pick__text">
+              <strong>Otro</strong>
+              <small>Escribe el producto que necesitas</small>
+            </span>
+          </label>
+          {otroOn && (
+            <>
+              <label htmlFor="vico-otro" className="sr-only">¿Qué otro producto necesitas?</label>
+              <textarea
+                id="vico-otro"
+                className="vico-pick__otro"
+                rows="2"
+                maxLength={200}
+                autoFocus
+                value={otro}
+                onChange={(e) => onOtroChange(e.target.value)}
+                placeholder="Ej. 2 litros de thinner estándar y lija P400"
+              />
+            </>
+          )}
+        </div>
+      </fieldset>
+
+      <button type="button" className="btn btn--red btn--block vico-picker__go" disabled={!ready} onClick={onContinue}>
+        {ready
+          ? `${editing ? 'Listo' : 'Continuar'}${count ? ` · ${count} ${count === 1 ? 'pieza' : 'piezas'}` : ''}${otroText ? ' + otro' : ''}`
           : 'Marca al menos un producto'}
       </button>
     </div>
@@ -183,7 +228,7 @@ function Summary({ data }) {
           </dd>
         </div>
       </dl>
-      {lines.length ? (
+      {lines.length || data.otro ? (
         <ul className="vico-summary__items">
           {lines.map(({ product, qty }) => (
             <li key={product.id}>
@@ -192,6 +237,12 @@ function Summary({ data }) {
               <strong>× {qty}</strong>
             </li>
           ))}
+          {data.otro && (
+            <li>
+              <span className="vico-pick__icon" aria-hidden="true"><Icon name="list" size={18} /></span>
+              <span><b>Otro:</b> {data.otro}</span>
+            </li>
+          )}
         </ul>
       ) : (
         <p className="vico-summary__empty">No hay productos. Toca “Cambiar productos”.</p>
@@ -350,12 +401,15 @@ export default function Vico() {
   // Lista de casillas: sigue a la dirección o, si venía del resumen, regresa a confirmar
   const onPickerDone = () => {
     setMessages((m) => m.map((x) => (x.type === 'picker' && !x.done ? { ...x, done: true } : x)))
-    const userMsg = msg({ from: 'user', text: linesText(lines) })
+    const otro = data.otro?.trim() || undefined
+    const nextData = { ...data, otro }
+    setData(nextData)
+    const userMsg = msg({ from: 'user', text: linesText(lines, otro) })
     if (editing) {
       setEditing(false)
-      goTo('confirm', data, [userMsg])
+      goTo('confirm', nextData, [userMsg])
     } else {
-      goTo(NEXT.productos, data, [userMsg])
+      goTo(NEXT.productos, nextData, [userMsg])
     }
   }
 
@@ -481,7 +535,14 @@ export default function Vico() {
                   {m.from === 'bot' && <img className="vico-msg__avatar" src={AVATAR} alt="" width="36" height="36" />}
                   {m.type === 'text' && <p className="vico-msg__bubble">{m.text}</p>}
                   {m.type === 'product' && <ProductCard product={byId[m.productId]} confirmedQty={m.qty} />}
-                  {m.type === 'picker' && <Picker onContinue={onPickerDone} editing={editing} />}
+                  {m.type === 'picker' && (
+                    <Picker
+                      onContinue={onPickerDone}
+                      editing={editing}
+                      otro={data.otro}
+                      onOtroChange={(otro) => setData((d) => ({ ...d, otro: otro ?? undefined }))}
+                    />
+                  )}
                   {m.type === 'summary' && <Summary data={data} />}
                 </li>
               )
@@ -528,7 +589,7 @@ export default function Vico() {
             {!waiting && phase === 'productos' && <p className="vico-chat__hint">Marca tus productos arriba y toca “{editing ? 'Listo' : 'Continuar'}”.</p>}
             {!waiting && phase === 'confirm' && (
               <div className="vico-chat__actions">
-                <button type="button" className="btn btn--red btn--block" disabled={!count} onClick={send}>
+                <button type="button" className="btn btn--red btn--block" disabled={!count && !data.otro} onClick={send}>
                   <Icon name="chat" size={20} /> Confirmar y enviar por WhatsApp
                 </button>
                 <div className="vico-chat__links">

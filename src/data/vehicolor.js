@@ -170,3 +170,27 @@ export const PRODUCTS = [
     specs: { ...SPECS_2K_CLEAR, Mezcla: '2 barniz : 1 catalizador' },
   },
 ]
+
+// Servicios que se cotizan en Vico (no aparecen en el catálogo de productos)
+export const SERVICES = [
+  {
+    id: 'igualacion',
+    cat: 'servicio',
+    tag: 'Servicio',
+    name: 'Igualación de pintura',
+    en: 'Color matching',
+    summary: 'Encontramos la fórmula exacta de tu color con espectrofotómetro. Trae el código de color o una pieza del vehículo.',
+    img: '/img/secciones/igualacion-color.webp',
+    ask: '¿Cuántos colores necesitas igualar?',
+    unit: ['color', 'colores'],
+  },
+]
+
+// Todo lo que se puede agregar a la cotización
+export const QUOTABLE = [...PRODUCTS, ...SERVICES]
+
+// "1 pieza", "3 piezas", "2 colores"…
+export const unitLabel = (item, n) => {
+  const [one, many] = item.unit || ['pieza', 'piezas']
+  return `${n} ${n === 1 ? one : many}`
+}

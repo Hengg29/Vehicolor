@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { QuoteContext } from './QuoteContext.js'
-import { PRODUCTS } from '../data/vehicolor.js'
+import { QUOTABLE } from '../data/vehicolor.js'
 
 const KEY = 'vehicolor-cotizacion'
 const INCOMING_KEY = 'vehicolor-avisos'
 const MAX_QTY = 999
-const VALID_IDS = new Set(PRODUCTS.map((p) => p.id))
+const VALID_IDS = new Set(QUOTABLE.map((p) => p.id))
 
 // Recupera la cotización guardada; ignora productos que ya no existan
 function load() {
@@ -54,7 +54,7 @@ export default function QuoteProvider({ children }) {
     return {
       items,
       count: Object.values(items).reduce((sum, q) => sum + q, 0),
-      lines: PRODUCTS.filter((p) => items[p.id]).map((p) => ({ product: p, qty: items[p.id] })),
+      lines: QUOTABLE.filter((p) => items[p.id]).map((p) => ({ product: p, qty: items[p.id] })),
       add: (id) => setQty(id, (items[id] || 0) + 1),
       setQty,
       remove: (id) => setQty(id, 0),
