@@ -46,13 +46,25 @@ const askText = (phase, data) => {
   return typeof ask === 'function' ? ask(data) : ask
 }
 
+// El resumen va con su texto de entrada; se marcan para poder quitarlos al actualizar la orden
+const summaryMsgs = (intro) => [msg({ text: intro, summaryIntro: true }), msg({ type: 'summary' })]
+const withoutSummary = (list) => list.filter((m) => m.type !== 'summary' && !m.summaryIntro)
+// Lo mismo con la lista de casillas activa (las ya usadas quedan ocultas en el historial)
+const pickerMsgs = (intro) => [msg({ text: intro, pickerIntro: true }), msg({ type: 'picker' })]
+const withoutPicker = (list) => {
+  const at = list.findIndex((m) => m.type === 'picker' && !m.done)
+  if (at < 0) return list
+  const from = at > 0 && list[at - 1].pickerIntro ? at - 1 : at
+  return [...list.slice(0, from), ...list.slice(at + 1)]
+}
+
 // Mensajes con los que Vico abre cada paso
 function promptFor(phase, data) {
   if (TEXT_STEPS[phase]) return [msg({ text: askText(phase, data) })]
   if (phase === 'productos') {
-    return [msg({ text: '¿Qué productos vas a cotizar? Marca los que ocupes y ajusta la cantidad.' }), msg({ type: 'picker' })]
+    return pickerMsgs('¿Qué productos vas a cotizar? Marca los que ocupes y ajusta la cantidad.')
   }
-  if (phase === 'confirm') return [msg({ text: 'Revisa tu orden antes de enviarla:' }), msg({ type: 'summary' })]
+  if (phase === 'confirm') return summaryMsgs('Revisa tu orden antes de enviarla:')
   return []
 }
 
@@ -129,14 +141,16 @@ function ProductCard({ product, pending, onConfirm, onCancel, confirmedQty }) {
 
 // Lista de productos con casillas y cantidad, agrupada por categoría
 function PickRow({ item }) {
-  const { items, setQty, remove } = useQuote()
-  const checked = Boolean(items[item.id])
+  const { items, setQty, remove, incoming } = useQuote()
+  const pending = incoming.includes(item.id)
+  const checked = Boolean(items[item.id]) && !pending
   return (
-    <div className={`vico-pick${checked ? ' is-checked' : ''}`}>
+    <div className={`vico-pick${checked ? ' is-checked' : ''}${pending ? ' is-pending' : ''}`}>
       <label className="vico-pick__label">
         <input
           type="checkbox"
           checked={checked}
+          disabled={pending}
           onChange={(e) => (e.target.checked ? setQty(item.id, 1) : remove(item.id))}
         />
         <span className="vico-pick__box" aria-hidden="true"><Icon name="check" size={14} /></span>
@@ -146,6 +160,7 @@ function PickRow({ item }) {
           <small>{item.en}</small>
         </span>
       </label>
+      {pending && <span className="vico-pick__pending">Por confirmar 👇</span>}
       {checked && <QtyStepper product={item} />}
     </div>
   )
@@ -153,7 +168,8 @@ function PickRow({ item }) {
 
 // Lista de productos con casillas y cantidad, agrupada por categoría; al final servicios y "Otro"
 function Picker({ onContinue, editing, otro, onOtroChange }) {
-  const { count } = useQuote()
+  const { lines, incoming } = useQuote()
+  const count = lines.filter(({ product }) => !incoming.includes(product.id)).reduce((sum, l) => sum + l.qty, 0)
   const otroOn = otro != null
   const otroText = otro?.trim()
   const ready = count > 0 || Boolean(otroText)
@@ -213,7 +229,9 @@ function Picker({ onContinue, editing, otro, onOtroChange }) {
 
 // Resumen final de la orden
 function Summary({ data }) {
-  const { lines, count } = useQuote()
+  const { lines: allLines, incoming } = useQuote()
+  const lines = allLines.filter(({ product }) => !incoming.includes(product.id))
+  const count = lines.reduce((sum, l) => sum + l.qty, 0)
   return (
     <div className="vico-summary">
       <p className="vico-summary__title"><Icon name="list" size={18} /> Orden a cotizar</p>
@@ -346,7 +364,7 @@ export default function Vico() {
 
   const goTo = (next, nextData, extra = []) => {
     setPhase(next)
-    setMessages((m) => [...m, ...extra, ...promptFor(next, nextData)])
+    setMessages((m) => [...(next === 'confirm' ? withoutSummary(m) : m), ...extra, ...promptFor(next, nextData)])
   }
 
   // Guarda la respuesta del paso actual y pasa al siguiente
@@ -433,6 +451,8 @@ export default function Vico() {
       setEditing(false)
     }
     const greeted = before.some((m) => m.start)
+    const inSummary = !restarting && phase === 'confirm'
+    const inPicker = !restarting && phase === 'productos'
 
     let next
     if (remaining) {
@@ -440,16 +460,19 @@ export default function Vico() {
       next = [msg({ text: `¡Anotado! ✅ Te falta confirmar ${remaining} producto${remaining > 1 ? 's' : ''} 👇` })]
     } else if (!greeted) {
       next = [msg({ text: restarting ? '¡Anotado! ✅ Empecemos una nueva cotización.' : '¡Anotado! ✅' }), ...START()]
+    } else if (inSummary) {
+      next = summaryMsgs('¡Anotado! ✅ Así quedó tu orden:')
+    } else if (inPicker) {
+      next = pickerMsgs('¡Anotado! ✅ Ya lo marqué en tu lista. ¿Algo más?')
     } else {
       const current = restarting ? 'cliente' : phase
       next = [
         msg({ text: '¡Anotado! ✅' }),
-        ...(TEXT_STEPS[current] ? [msg({ text: `Sigamos: ${askText(current, data)}` })]
-          : current === 'confirm' ? [msg({ text: 'Ya actualicé tu orden 👆' })]
-            : []),
+        ...(TEXT_STEPS[current] ? [msg({ text: `Sigamos: ${askText(current, data)}` })] : []),
       ]
     }
-    setMessages([...before, ...confirmed, ...next])
+    const moved = remaining ? before : inSummary ? withoutSummary(before) : inPicker ? withoutPicker(before) : before
+    setMessages([...moved, ...confirmed, ...next])
   }
 
 
@@ -467,11 +490,12 @@ export default function Vico() {
     } else if (untouched) {
       // No había empezado la plática: el aviso va antes del saludo
       setMessages((m) => [note, ...m])
+    } else if (phase === 'confirm') {
+      setMessages((m) => [...withoutSummary(m), note, ...summaryMsgs('Así quedó tu orden:')])
+    } else if (phase === 'productos') {
+      setMessages((m) => [...withoutPicker(m), note, ...pickerMsgs('Sigue marcando tus productos:')])
     } else {
-      const resume =
-        TEXT_STEPS[phase] ? [msg({ text: `Sigamos: ${askText(phase, data)}` })]
-          : phase === 'confirm' ? [msg({ text: 'Ya actualicé tu orden 👆' })]
-            : []
+      const resume = TEXT_STEPS[phase] ? [msg({ text: `Sigamos: ${askText(phase, data)}` })] : []
       setMessages((m) => [...m, note, ...resume])
     }
   }
