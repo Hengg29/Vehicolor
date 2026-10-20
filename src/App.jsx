@@ -5,12 +5,17 @@ import Stats from './components/Stats.jsx'
 import Products from './components/Products.jsx'
 import Icon from './components/Icon.jsx'
 import Pillars from './components/Pillars.jsx'
+import ColorMatch from './components/ColorMatch.jsx'
 import Splash from './components/Splash.jsx'
 import Vico from './components/Vico.jsx'
 import { useQuote } from './quote/QuoteContext.js'
 import logo from './assets/logo-vehicolor-blanco.png'
 import { SITE, waLink } from './data/vehicolor.js'
 import './App.css'
+
+/*
+  Sección anterior de igualación de color. Se deja comentada mientras se valida <ColorMatch />;
+  bórrala (y los estilos .color__* de App.css) cuando la nueva esté aprobada.
 
 function ColorMatch() {
   return (
@@ -44,6 +49,7 @@ function ColorMatch() {
     </section>
   )
 }
+*/
 
 function Contact() {
   const { setOpen } = useQuote()

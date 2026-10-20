@@ -23,6 +23,17 @@
   --font-body: 'Roboto', Verdana, Helvetica, sans-serif;
   --font-mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
 
+  /* Igualación de color (ColorMatch): paleta y fuentes propias del rediseño */
+  --cm-red: #e0332b;
+  --cm-yellow: #f5c542;
+  --cm-bg: #080808;
+  --cm-line: #26262b;
+  --cm-muted: #9a9aa3;
+  --font-display: 'Barlow Condensed', Impact, sans-serif;
+  --font-barlow: 'Barlow', system-ui, sans-serif;
+  --font-jet: 'JetBrains Mono', ui-monospace, monospace;
+  --cm-ease: cubic-bezier(.2, .7, .2, 1);
+
   --container: 1200px;
   --header-h: 76px;
   --radius-sm: 3px;

@@ -14,6 +14,41 @@ export const SITE = {
 export const waLink = (text = SITE.whatsappText) =>
   `https://wa.me/${SITE.whatsapp}?text=${encodeURIComponent(text)}`
 
+// Sección "Igualación de color" (escáner con franjas de color)
+export const COLOR_MATCH = {
+  eyebrow: 'Igualación de color',
+  title: 'El tono exacto,',
+  titleMark: 'a la primera',
+  lead: {
+    before: 'Vehicolor trabaja con espectrofotómetro y una base de ',
+    strong: 'más de 120,000 fórmulas',
+    after: '. Trae el código de color o una pieza del vehículo y te ayudamos a encontrar la fórmula.',
+  },
+  points: [
+    { visual: 'finishes', text: 'Colores sólidos, metálicos y perlados' },
+    { visual: 'mixes', text: 'Bases 1K y acabados 2K' },
+    { visual: 'pin', text: `Asesoría de aplicación en ${SITE.city}` },
+  ],
+  cta: 'Pedir igualación',
+  waText: 'Hola, necesito igualar un color de auto.',
+  note: 'Respuesta directa por WhatsApp',
+  tape: 'Espectrofotómetro',
+  hint: 'Arrastra para leer el color',
+  image: {
+    src: '/img/secciones/igualacion-color.webp',
+    alt: 'Auto con franjas de colores de igualación',
+    width: 700,
+    height: 450,
+  },
+  colors: [
+    { name: 'Rojo', hex: '#e2231a' },
+    { name: 'Naranja', hex: '#f59a23' },
+    { name: 'Amarillo', hex: '#f0e613' },
+    { name: 'Verde', hex: '#7fc241' },
+    { name: 'Azul', hex: '#36b9d9' },
+  ],
+}
+
 export const STATS = [
   { value: 80, suffix: '+', label: 'países con presencia de la marca' },
   { value: 120000, suffix: '+', label: 'fórmulas de color en su base' },
