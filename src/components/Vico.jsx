@@ -619,7 +619,7 @@ export default function Vico() {
 
       <div className="vico__launch">
         {!open && (
-          <span className="vico__bubble" aria-hidden="true">
+          <span className={`vico__bubble${lastAdded ? ' vico__bubble--alert' : ''}`} aria-hidden="true">
             {lastAdded ? `Agregaste ${lastAdded.name} 👀` : '¿Necesitas ayuda?'}
           </span>
         )}

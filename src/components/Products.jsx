@@ -21,7 +21,7 @@ export default function Products() {
       <div className="container">
         <header className="section__head">
           <p className="eyebrow"><span className="eyebrow__bar" aria-hidden="true" />Catálogo</p>
-          <h2 className="section__title">Todo para el proceso de repintado</h2>
+          <h2 className="section__title section__title--caps">Todo para el proceso de <span className="title-mark">repintado</span></h2>
         </header>
 
         <CategoryCards value={cat} onChange={setCat} />

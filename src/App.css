@@ -784,13 +784,26 @@
 .cta p { margin: 8px 0 0; max-width: 52ch; }
 
 /* ---------- Footer ---------- */
-.footer { padding: 40px 0; background: var(--black); border-top: 4px solid var(--red); font-size: 14px; color: var(--gray); }
-.footer__inner { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
-.footer__inner img { height: 30px; width: auto; margin-bottom: 8px; object-fit: contain; }
+.footer { padding: 64px 0 0; background: var(--black); border-top: 4px solid var(--red); font-size: 15px; color: var(--gray); }
 .footer p { margin: 0; }
-.footer a { color: var(--white); }
+.footer a { color: rgba(255, 255, 255, .85); text-decoration: none; transition: color var(--ease); }
 .footer a:hover { color: var(--yellow); }
-.footer__legal { font-size: 13px; }
+.footer__grid { display: grid; grid-template-columns: 1.4fr 1fr 1.2fr; gap: 48px; padding-bottom: 48px; }
+.footer__brand { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; max-width: 36ch; }
+.footer__brand img { height: 32px; width: auto; }
+.footer__brand p { line-height: 1.6; }
+.footer__col h3 {
+  margin: 0 0 18px; font: 700 13px var(--font-heading); letter-spacing: .14em; text-transform: uppercase; color: var(--white);
+}
+.footer__col h3::after { content: ''; display: block; width: 28px; height: 3px; margin-top: 10px; background: var(--red); }
+.footer__col ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.footer__col li a,
+.footer__col li span { display: inline-flex; align-items: center; gap: 10px; min-height: 36px; overflow-wrap: anywhere; }
+.footer__col .icon { color: var(--yellow); }
+.footer__bottom {
+  display: flex; flex-wrap: wrap; justify-content: space-between; gap: 8px 32px;
+  padding: 20px 0 28px; border-top: 1px solid var(--gray-line); font-size: 13px;
+}
 
 /* ---------- Cotización ---------- */
 .btn--block { width: 100%; }
@@ -1656,4 +1669,57 @@ html.vico-lock, html.vico-lock body { overflow: hidden; }
   .vico { max-height: calc(100dvh - var(--header-h) - 28px); }
   .vico-chat { flex-shrink: 1; min-height: 0; }
   .vico__launch { flex-shrink: 0; }
+}
+
+
+/* ==========================================================================
+   Pulido de diseño
+   ========================================================================== */
+
+/* Títulos de sección en mayúsculas con palabra resaltada (igual que Pilares) */
+.section__title--caps { max-width: 22ch; text-transform: uppercase; line-height: 1.02; }
+.title-mark { padding: 0 .06em; background: linear-gradient(transparent 58%, var(--yellow) 58%, var(--yellow) 92%, transparent 92%); color: var(--black); }
+.section--dark .title-mark { color: var(--white); background: linear-gradient(transparent 60%, var(--red) 60%, var(--red) 92%, transparent 92%); }
+
+/* Footer en tablet y celular */
+@media (max-width: 1023px) {
+  .footer__grid { grid-template-columns: 1fr 1fr; gap: 40px 32px; }
+  .footer__brand { grid-column: 1 / -1; max-width: 52ch; }
+}
+@media (max-width: 600px) {
+  .footer { padding-top: 48px; }
+  .footer__grid { grid-template-columns: 1fr; gap: 32px; padding-bottom: 32px; }
+  .footer__bottom { flex-direction: column; padding-bottom: calc(28px + 88px); } /* espacio para Vico */
+}
+@media (min-width: 1920px) {
+  .footer__grid { gap: 80px; }
+  .footer__col h3 { font-size: 14px; }
+}
+
+/* Stats en celular: 2 columnas (80+ | 12) y 120,000+ abajo a todo lo ancho */
+@media (max-width: 640px) {
+  .stats__grid { grid-template-columns: 1fr 1fr; }
+  .stat, .stat:first-child { padding: 22px 0; border-top: 0; }
+  .stat:nth-child(3) { padding-left: 20px; border-left: 1px solid var(--gray-line); }
+  .stat:nth-child(2) { grid-column: 1 / -1; order: 3; border-top: 1px solid var(--gray-line); }
+  .stat__value { font-size: 34px; }
+}
+
+/* Tarjetas de producto más bajas en celular: la página queda mucho más corta */
+@media (max-width: 600px) {
+  .pcard__swatch { height: 170px; }
+  .pcard__img { top: 86px; width: 84px; height: 84px; border-width: 5px; }
+  .pcard__tape { top: 14px; font-size: 13px; padding: 6px 18px 6px 16px; }
+  .pcard__body { padding: 10px 20px 20px; }
+  .pcard__title { font-size: 24px; margin-bottom: 6px; }
+  .pcard__text { margin-bottom: 16px; }
+}
+@media (max-width: 360px) {
+  .pcard__swatch { height: 150px; }
+  .pcard__img { top: 78px; width: 72px; height: 72px; }
+}
+
+/* Globito "¿Necesitas ayuda?" solo en pantallas grandes; en celular solo aparece con avisos */
+@media (max-width: 600px) {
+  .vico__bubble:not(.vico__bubble--alert) { display: none; }
 }

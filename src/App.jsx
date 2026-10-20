@@ -74,15 +74,52 @@ function Contact() {
 }
 
 
+const FOOTER_LINKS = [
+  { href: '#productos', label: 'Productos' },
+  { href: '#color', label: 'Igualación de color' },
+  { href: '#beneficios', label: 'Por qué Vehicolor' },
+  { href: '#contacto', label: 'Contacto' },
+]
+
 function Footer() {
+  const { setOpen } = useQuote()
+  const phone = SITE.whatsapp.replace(/^52/, '').replace(/(\d{3})(\d{3})(\d{4})/, '$1 $2 $3')
+
   return (
     <footer className="footer">
-      <div className="container footer__inner">
-        <img src={logo} alt="Vehicolor" width="114" height="30" />
-        <p>Distribuidor autorizado en {SITE.city}. · <a href={`mailto:${SITE.email}`}>{SITE.email}</a></p>
-        <p className="footer__legal">
-          Vehicolor® es marca de Vehicolor Limited. Fichas técnicas y hojas de seguridad publicadas por el fabricante.
-        </p>
+      <div className="container footer__grid">
+        <div className="footer__brand">
+          <img src={logo} alt="Vehicolor" width="114" height="30" />
+          <p>Pintura automotriz profesional para talleres de hojalatería y pintura. Distribuidor autorizado en {SITE.city}.</p>
+          <button type="button" className="btn btn--red btn--sm" onClick={() => setOpen(true)}>
+            <Icon name="chat" size={16} /> Cotizar con Vico
+          </button>
+        </div>
+
+        <nav className="footer__col" aria-label="Pie de página">
+          <h3>Navegación</h3>
+          <ul>
+            {FOOTER_LINKS.map((l) => <li key={l.href}><a href={l.href}>{l.label}</a></li>)}
+          </ul>
+        </nav>
+
+        <div className="footer__col">
+          <h3>Contacto</h3>
+          <ul>
+            <li>
+              <a href={waLink()} target="_blank" rel="noreferrer"><Icon name="chat" size={16} /> WhatsApp {phone}</a>
+            </li>
+            <li>
+              <a href={`mailto:${SITE.email}`}><Icon name="send" size={16} /> {SITE.email}</a>
+            </li>
+            <li><span><Icon name="pin" size={16} /> {SITE.city}, México</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div className="container footer__bottom">
+        <p>© {new Date().getFullYear()} Distribuidor autorizado Vehicolor · {SITE.city}</p>
+        <p>Vehicolor® es marca de Vehicolor Limited. Fichas técnicas y hojas de seguridad publicadas por el fabricante.</p>
       </div>
     </footer>
   )
