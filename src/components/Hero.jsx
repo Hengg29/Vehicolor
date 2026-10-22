@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
 import Icon from './Icon.jsx'
-import { SITE, waLink } from '../data/vehicolor.js'
+import { waLink } from '../data/vehicolor.js'
 
 // WebM (VP9) es más ligero; el MP4 queda de respaldo para Safari viejito
 // El poster (primer cuadro) se ve mientras el video termina de cargar
@@ -75,7 +75,7 @@ export default function Hero({ onReady }) {
       <div className="container hero__content">
         <p className="eyebrow">
           <span className="eyebrow__bar" aria-hidden="true" />
-          Distribuidor autorizado · {SITE.city}
+          Distribuidor autorizado
         </p>
         <h1 className="hero__title">
           Sistema profesional de <span className="text-yellow">repintado</span> automotriz
