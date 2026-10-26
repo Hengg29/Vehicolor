@@ -6,6 +6,7 @@ import Products from './components/Products.jsx'
 import Icon from './components/Icon.jsx'
 import Pillars from './components/Pillars.jsx'
 import ColorMatch from './components/ColorMatch.jsx'
+import Workshops from './components/Workshops.jsx'
 import Splash from './components/Splash.jsx'
 import Vico from './components/Vico.jsx'
 import { useQuote } from './quote/QuoteContext.js'
@@ -139,6 +140,7 @@ export default function App() {
         <Stats />
         <Products />
         <Pillars />
+        <Workshops />
         <ColorMatch />
         <Contact />
       </main>

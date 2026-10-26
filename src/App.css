@@ -1729,3 +1729,49 @@ html.vico-lock, html.vico-lock body { overflow: hidden; }
 @media (max-width: 600px) {
   .vico__bubble:not(.vico__bubble--alert) { display: none; }
 }
+
+/* ---------- Vehicolor en los talleres (galería) ---------- */
+.workshops__head { display: grid; gap: 12px; }
+.workshops__lead { max-width: 60ch; margin: 0; color: rgba(255, 255, 255, .72); font-size: 17px; }
+.workshops__grid {
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: 220px; gap: 14px;
+}
+.workshops__item--1 { grid-column: span 2; grid-row: span 2; }
+.workshops__item:not(.workshops__item--1) { grid-column: span 2; }
+.workshops__item figure { position: relative; height: 100%; margin: 0; overflow: hidden; border-radius: var(--radius); background: var(--black-3); }
+.workshops__item img { width: 100%; height: 100%; object-fit: cover; transition: transform 500ms ease, filter var(--ease); filter: saturate(.9); }
+.workshops__item figure::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(0deg, rgba(10, 10, 11, .75) 0%, transparent 45%);
+}
+.workshops__item figcaption {
+  position: absolute; left: 16px; bottom: 14px; z-index: 1;
+  display: flex; align-items: center; gap: 10px;
+  font: 700 14px var(--font-heading); letter-spacing: .08em; text-transform: uppercase; color: var(--white);
+}
+.workshops__item figcaption::before { content: ''; width: 18px; height: 3px; background: var(--red); }
+.workshops__item:hover img { transform: scale(1.04); filter: saturate(1); }
+
+@media (min-width: 1920px) { .workshops__grid { grid-auto-rows: 280px; gap: 18px; } }
+@media (min-width: 1440px) and (max-width: 1919px) { .workshops__grid { grid-auto-rows: 250px; } }
+@media (min-width: 601px) and (max-width: 1023px) {
+  .workshops__grid { grid-template-columns: repeat(2, 1fr); grid-auto-rows: 200px; }
+  .workshops__item--1 { grid-column: span 2; grid-row: span 2; }
+  .workshops__item:not(.workshops__item--1) { grid-column: span 2; }
+}
+@media (max-width: 600px) {
+  .workshops__lead { font-size: 15px; }
+  /* Carrusel horizontal: se desliza con el dedo */
+  .workshops__grid {
+    display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory;
+    margin-inline: -16px; padding: 0 16px 8px; scrollbar-width: none;
+  }
+  .workshops__grid::-webkit-scrollbar { display: none; }
+  .workshops__item { flex: 0 0 82%; height: 240px; scroll-snap-align: center; }
+  .workshops__item figcaption { font-size: 13px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .workshops__item img { transition: none; }
+  .workshops__item:hover img { transform: none; }
+}
