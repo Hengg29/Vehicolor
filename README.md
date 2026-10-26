@@ -81,8 +81,7 @@ Hay ajustes aparte para celular acostado. Pilares y Ficha técnica tienen sus pr
 ## Pendiente antes de publicar
 
 1. Poner el número real de WhatsApp en `SITE`. Ahorita está uno de ejemplo (833 427 3968).
-2. Tener por escrito la autorización de Vehicolor como distribuidor y para usar su logo y sus fotos.
-3. Pedir a Vehicolor las TDS y MSDS de los primarios. Mientras tanto, esas tarjetas muestran el enlace "Solicitar fichas" por WhatsApp.
+2. Pedir a Vehicolor las TDS y MSDS de los primarios. Mientras tanto, esas tarjetas muestran el enlace "Solicitar fichas" por WhatsApp.
 
 ## Cómo optimizar videos nuevos
 
