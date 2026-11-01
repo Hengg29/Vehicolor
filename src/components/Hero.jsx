@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState, useSyncExternalStore } from 'react'
+import { useEffect, useRef } from 'react'
 import Icon from './Icon.jsx'
+import { useMedia } from '../hooks/useMedia.js'
 import { waLink } from '../data/vehicolor.js'
 
 // WebM (VP9) es más ligero; el MP4 queda de respaldo para Safari viejito
@@ -9,22 +10,11 @@ const VIDEOS = {
   vertical: '/videos/hero-vertical',
 }
 
-function useMedia(query) {
-  return useSyncExternalStore(
-    (cb) => {
-      const mq = window.matchMedia(query)
-      mq.addEventListener('change', cb)
-      return () => mq.removeEventListener('change', cb)
-    },
-    () => window.matchMedia(query).matches,
-  )
-}
-
 export default function Hero({ onReady }) {
   const videoRef = useRef(null)
   const vertical = useMedia('(max-width: 768px) and (orientation: portrait)')
+  // Con "reducir movimiento" activado en el sistema, el video no se reproduce y se queda el poster
   const reduceMotion = useMedia('(prefers-reduced-motion: reduce)')
-  const [paused, setPaused] = useState(reduceMotion)
   const src = vertical ? VIDEOS.vertical : VIDEOS.horizontal
 
   // Si el video ya venía de caché, puede estar listo antes de que React escuche el evento
@@ -36,20 +26,17 @@ export default function Hero({ onReady }) {
   useEffect(() => {
     const video = videoRef.current
     if (!video) return
+    if (reduceMotion) {
+      video.pause()
+      return
+    }
     const io = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && !paused) video.play().catch(() => {})
+      if (entry.isIntersecting) video.play().catch(() => {})
       else video.pause()
     })
     io.observe(video)
     return () => io.disconnect()
-  }, [paused, src])
-
-  const togglePlay = () => {
-    const video = videoRef.current
-    if (paused) video.play().catch(() => {})
-    else video.pause()
-    setPaused(!paused)
-  }
+  }, [reduceMotion, src])
 
   return (
     <section id="inicio" className="hero">
@@ -57,14 +44,14 @@ export default function Hero({ onReady }) {
         key={src}
         ref={videoRef}
         className="hero__video"
-        autoPlay={!paused}
+        autoPlay={!reduceMotion}
         muted
         loop
         playsInline
         preload="auto"
         poster={`${src}-poster.webp`}
         onCanPlayThrough={onReady}
-        onLoadedData={paused ? onReady : undefined}
+        onLoadedData={reduceMotion ? onReady : undefined}
         aria-hidden="true"
       >
         <source src={`${src}.webm`} type="video/webm" />
@@ -75,7 +62,7 @@ export default function Hero({ onReady }) {
       <div className="container hero__content">
         <p className="eyebrow">
           <span className="eyebrow__bar" aria-hidden="true" />
-          Distribuidor autorizado
+          Distribuidor autorizado en México
         </p>
         <h1 className="hero__title">
           Sistema profesional de <span className="text-yellow">repintado</span> automotriz
@@ -93,15 +80,6 @@ export default function Hero({ onReady }) {
           </a>
         </div>
       </div>
-
-      <button
-        type="button"
-        className="hero__play"
-        onClick={togglePlay}
-        aria-label={paused ? 'Reproducir video de fondo' : 'Pausar video de fondo'}
-      >
-        <Icon name={paused ? 'play' : 'pause'} size={18} />
-      </button>
 
       <div className="hero__stripe" aria-hidden="true" />
     </section>

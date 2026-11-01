@@ -3,6 +3,7 @@ import Header from './components/Header.jsx'
 import Hero from './components/Hero.jsx'
 import Stats from './components/Stats.jsx'
 import Products from './components/Products.jsx'
+import ColorChart from './components/ColorChart.jsx'
 import Icon from './components/Icon.jsx'
 import Pillars from './components/Pillars.jsx'
 import ColorMatch from './components/ColorMatch.jsx'
@@ -77,6 +78,7 @@ function Contact() {
 
 const FOOTER_LINKS = [
   { href: '#productos', label: 'Productos' },
+  { href: '#colores', label: 'Carta de colores' },
   { href: '#color', label: 'Igualación de color' },
   { href: '#beneficios', label: 'Por qué Vehicolor' },
   { href: '#contacto', label: 'Contacto' },
@@ -139,6 +141,7 @@ export default function App() {
         <Hero onReady={onVideoReady} />
         <Stats />
         <Products />
+        <ColorChart />
         <Pillars />
         <Workshops />
         <ColorMatch />

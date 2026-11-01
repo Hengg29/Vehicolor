@@ -4,6 +4,7 @@ import Icon from './Icon.jsx'
 
 const LINKS = [
   { href: '#productos', label: 'Productos' },
+  { href: '#colores', label: 'Colores' },
   { href: '#color', label: 'Igualación de color' },
   { href: '#beneficios', label: 'Por qué Vehicolor' },
   { href: '#contacto', label: 'Contacto' },

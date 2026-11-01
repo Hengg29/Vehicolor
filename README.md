@@ -7,9 +7,11 @@ Vehicolor® es marca de Vehicolor Limited, fabricante de pintura automotriz para
 ## Qué tiene la página
 
 - **Pantalla de carga:** muestra el logo hasta que el video del hero puede reproducirse, con un máximo de 3 segundos.
-- **Hero con video:** horizontal en computadora y vertical en celular, con poster y botón para pausarlo.
-- **Catálogo de 12 productos:** bases 1K, acabado 2K, masilla, primarios y barnices, con tarjetas de categoría para filtrar.
-- **Ficha técnica por producto:** ventana con proporción de mezcla, datos de aplicación, secuencia de manos y enlaces a TDS y MSDS.
+- **Hero con video:** horizontal en computadora y vertical en celular, con poster. Si el sistema tiene activado "reducir movimiento", el video no se reproduce y se queda el poster.
+- **Números de la marca:** países con presencia, tintes de la carta de colores y productos con ficha técnica.
+- **Catálogo de 24 productos:** pintura, masillas, primarios, barnices y thinner y aditivos, con tarjetas de categoría para filtrar. Sin filtro abre con dos filas (cuatro tarjetas en celular) que mezclan todas las categorías y el botón "Ver los 24 productos".
+- **Ficha técnica por producto:** ventana con proporción de mezcla, datos de aplicación, secuencia de manos y enlaces a la TDS en español y a la MSDS.
+- **Carta de colores:** los 137 tintes de las cartas oficiales 1K y 2K, con buscador por código o color y filtro por serie. Cada tinte abre una ficha con su color puro, cómo se ve en mezcla y el botón para cotizarlo. Al final están las cartas completas para verlas o descargar el PDF.
 - **Vico, asistente de cotización:** se explica abajo.
 - **Secciones de la marca:** pilares, igualación de color y datos de la marca.
 
@@ -18,7 +20,7 @@ Vehicolor® es marca de Vehicolor Limited, fabricante de pintura automotriz para
 1. **"Cotizar" en una tarjeta:** el producto se agrega y Vico muestra un globito rojo con el número de productos por confirmar.
 2. **Al abrir Vico:** cada producto aparece en una tarjeta con foto, cantidades rápidas (1, 2, 3, 5, 10), botón **Confirmar** y **Eliminar producto**. Mientras haya tarjetas pendientes, Vico no pregunta nada más.
 3. **La plática:** nombre → teléfono → productos → dirección.
-   - **Productos:** lista con casillas y cantidad, agrupada por categoría. Al final están **Servicios** (igualación de pintura, que se cuenta en colores) y **Otro**, para escribir algo que no esté en la lista.
+   - **Productos:** lista con casillas y cantidad, agrupada por categoría. Después vienen los **Tintes** que el cliente agregó desde la carta de colores (con un botón para ir a escoger más), **Servicios** (igualación de pintura, que se cuenta en colores) y **Otro**, para escribir algo que no esté en la lista.
    - **Dirección:** se puede escribir o usar la **ubicación actual**, que agrega un enlace de Google Maps.
 4. **Resumen:** muestra la orden completa con **Confirmar y enviar por WhatsApp**, **Cambiar productos** y **Eliminar cotización** (pide un segundo toque).
 
@@ -50,12 +52,15 @@ La ubicación en tiempo real solo funciona con **HTTPS** o en `localhost`. Si ab
 |---|---|
 | WhatsApp, correo y ciudad del distribuidor | `src/data/vehicolor.js` → `SITE` |
 | Productos, fichas técnicas y PDFs | `src/data/vehicolor.js` → `PRODUCTS` |
+| Fichas técnicas (TDS) en español | `public/fichas-tecnicas/` (las MSDS se enlazan al sitio oficial) |
+| Tintes de la carta de colores | `src/data/tintes.js` (`TINT_SERIES` y `ROWS`: código, nombre, descripción y colores) |
+| Cartas de color completas | `public/cartas-color/` → PDF original, `.webp` para verla en pantalla y `-mini.webp` para la miniatura |
 | Servicios que se cotizan en Vico | `src/data/vehicolor.js` → `SERVICES` |
 | Preguntas, pasos y mensaje de WhatsApp de Vico | `src/components/Vico.jsx` (`TEXT_STEPS`, `buildMessage`) |
 | Cantidades guardadas y avisos de productos | `src/quote/QuoteProvider.jsx` |
 | Tiempos de la pantalla de carga | `src/components/Splash.jsx` (`MAX_WAIT`, `MIN_SHOW`) |
 | Videos del hero | `public/videos/` → `hero-horizontal` y `hero-vertical`, cada uno en `.webm`, `.mp4` y `-poster.webp` |
-| Fotos de categorías, productos y secciones | `public/img/` en `.webp` (copiadas del sitio oficial de Vehicolor) |
+| Fotos de categorías, productos y secciones | `public/img/` en `.webp` (copiadas del sitio oficial de Vehicolor). Thinner, catalizador y aditivos no tienen foto oficial y usan `img/productos/lata-generica.webp` |
 | Imagen de Vico | `public/img/vico.webp` |
 | Colores y tipografías | `src/index.css` |
 | Estilos de las secciones | `src/App.css` |
@@ -81,7 +86,8 @@ Hay ajustes aparte para celular acostado. Pilares y Ficha técnica tienen sus pr
 ## Pendiente antes de publicar
 
 1. Poner el número real de WhatsApp en `SITE`. Ahorita está uno de ejemplo (833 427 3968).
-2. Pedir a Vehicolor las TDS y MSDS de los primarios. Mientras tanto, esas tarjetas muestran el enlace "Solicitar fichas" por WhatsApp.
+2. Pedir a Vehicolor las MSDS que no están publicadas: primario epóxico, barniz secado rápido, thinner, catalizador, desengrasante y aditivos. Esas tarjetas solo muestran la TDS.
+3. Pedir fotos reales de thinner, catalizador, desengrasante y aditivos para reemplazar la lata genérica.
 
 ## Cómo optimizar videos nuevos
 

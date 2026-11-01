@@ -3,6 +3,7 @@ import Icon from './Icon.jsx'
 import QtyStepper from './QtyStepper.jsx'
 import { useQuote } from '../quote/QuoteContext.js'
 import { CATEGORIES, PRODUCTS, QUOTABLE, SERVICES, unitLabel, waLink } from '../data/vehicolor.js'
+import { TINTS } from '../data/tintes.js'
 
 // Asistente virtual: pide los datos uno por uno, deja escoger productos con casillas
 // y cantidad, y al final muestra la orden para confirmarla y mandarla por WhatsApp.
@@ -166,7 +167,33 @@ function PickRow({ item }) {
   )
 }
 
-// Lista de productos con casillas y cantidad, agrupada por categoría; al final servicios y "Otro"
+// Tintes: son muchos para listarlos todos, así que solo aparecen los que ya están en la cotización
+// y un botón que lleva a la carta de colores para escoger más
+function TintPicks() {
+  const { items, incoming, setOpen } = useQuote()
+  const picked = TINTS.filter((t) => items[t.id] || incoming.includes(t.id))
+  const browse = () => {
+    setOpen(false)
+    // Espera a que se cierre el chat (en celular libera el scroll de la página) y luego baja a la carta
+    requestAnimationFrame(() => document.getElementById('colores')?.scrollIntoView({ block: 'start' }))
+  }
+  return (
+    <fieldset className="vico-picker__group">
+      <legend>Tintes de la carta de colores</legend>
+      {picked.map((t) => <PickRow key={t.id} item={t} />)}
+      <button type="button" className="vico-picker__browse" onClick={browse}>
+        <span className="vico-pick__icon" aria-hidden="true"><Icon name="palette" size={20} /></span>
+        <span className="vico-pick__text">
+          <strong>{picked.length ? 'Agregar más tintes' : 'Elegir tintes'}</strong>
+          <small>Abre la carta de colores 1K y 2K</small>
+        </span>
+        <Icon name="arrow" size={18} className="vico-picker__browse-arrow" />
+      </button>
+    </fieldset>
+  )
+}
+
+// Lista de productos con casillas y cantidad, agrupada por categoría; al final tintes, servicios y "Otro"
 function Picker({ onContinue, editing, otro, onOtroChange }) {
   const { lines, incoming } = useQuote()
   const count = lines.filter(({ product }) => !incoming.includes(product.id)).reduce((sum, l) => sum + l.qty, 0)
@@ -182,6 +209,8 @@ function Picker({ onContinue, editing, otro, onOtroChange }) {
           {PRODUCTS.filter((p) => p.cat === c.id).map((p) => <PickRow key={p.id} item={p} />)}
         </fieldset>
       ))}
+
+      <TintPicks />
 
       <fieldset className="vico-picker__group">
         <legend>Servicios</legend>
@@ -211,7 +240,7 @@ function Picker({ onContinue, editing, otro, onOtroChange }) {
                 autoFocus
                 value={otro}
                 onChange={(e) => onOtroChange(e.target.value)}
-                placeholder="Ej. 2 litros de thinner estándar y lija P400"
+                placeholder="Ej. lija P400 y cinta para enmascarar"
               />
             </>
           )}
@@ -310,10 +339,20 @@ export default function Vico() {
   const [error, setError] = useState(null)
   const [locating, setLocating] = useState(false)
   const [confirmCancel, setConfirmCancel] = useState(false)
+  const [onHero, setOnHero] = useState(true)
   const rootRef = useRef(null)
   const listRef = useRef(null)
   const inputRef = useRef(null)
   const step = TEXT_STEPS[phase]
+
+  // "¿Necesitas ayuda?" solo se ve mientras el hero está en pantalla; más abajo taparía el contenido
+  useEffect(() => {
+    const hero = document.getElementById('inicio')
+    if (!hero) return
+    const io = new IntersectionObserver(([entry]) => setOnHero(entry.isIntersecting), { threshold: 0.35 })
+    io.observe(hero)
+    return () => io.disconnect()
+  }, [])
   const lastAdded = byId[incoming[incoming.length - 1]]
   // Hay productos agregados con "Cotizar" esperando su cantidad: primero se confirman
   const waiting = incoming.length > 0
@@ -643,7 +682,10 @@ export default function Vico() {
 
       <div className="vico__launch">
         {!open && (
-          <span className={`vico__bubble${lastAdded ? ' vico__bubble--alert' : ''}`} aria-hidden="true">
+          <span
+            className={`vico__bubble${lastAdded ? ' vico__bubble--alert' : ''}${!lastAdded && !onHero ? ' is-hidden' : ''}`}
+            aria-hidden="true"
+          >
             {lastAdded ? `Agregaste ${lastAdded.name} 👀` : '¿Necesitas ayuda?'}
           </span>
         )}
