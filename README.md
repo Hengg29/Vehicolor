@@ -46,6 +46,20 @@ npm run build    # versión para publicar (carpeta dist/)
 
 La ubicación en tiempo real solo funciona con **HTTPS** o en `localhost`. Si abres el servidor local desde el celular con la IP de tu computadora (`http://192.168…`), el navegador la bloquea.
 
+### Rendimiento (Lighthouse)
+
+Mide siempre la versión para publicar (`npm run build` y luego `npm run preview`), en una ventana de incógnito para que las extensiones no cuenten. `npm run dev` no está optimizado y da números más bajos.
+
+Medición del 2026-11-01 con la versión para publicar:
+
+| | Rendimiento | Accesibilidad | Mejores prácticas | SEO |
+|---|---|---|---|---|
+| Celular | 89 | 100 | 100 | 100 |
+| Escritorio | 99 | 100 | 100 | 100 |
+
+- Las tipografías de Google Fonts se cargan sin bloquear el primer dibujo (`index.html`).
+- El hosting debe comprimir los archivos con gzip o brotli; sin compresión, Lighthouse marca unos 266 KB de más.
+
 ## Dónde se cambia cada cosa
 
 | Qué | Archivo |

@@ -194,17 +194,14 @@ export default function ColorChart() {
               const qty = items[t.id]
               return (
                 <li key={t.id}>
-                  <button
-                    type="button"
-                    className="tint"
-                    onClick={() => openTint(t)}
-                    aria-label={`${t.code} ${t.color}, ${s.name}${qty ? `, ${qty} en tu cotización` : ''}`}
-                  >
+                  {/* El nombre accesible empieza con el texto visible ("1081 1K Rojo") y suma la serie y la cantidad */}
+                  <button type="button" className="tint" onClick={() => openTint(t)}>
                     <span className={`tint__swatch fx-${s.effect}`} style={swatchStyle(t)}>
-                      {qty > 0 && <span className="tint__qty"><Icon name="check" size={12} />{qty}</span>}
+                      {qty > 0 && <span className="tint__qty" aria-hidden="true"><Icon name="check" size={12} />{qty}</span>}
                     </span>
-                    <span className="tint__code">{t.code}<small>{t.system}</small></span>
+                    <span className="tint__code">{t.code}{' '}<small>{t.system}</small></span>
                     <span className="tint__name">{t.color}</span>
+                    <span className="sr-only">, {s.name}{qty > 0 && `, ${qty} en tu cotización`}</span>
                   </button>
                 </li>
               )
@@ -228,7 +225,7 @@ export default function ColorChart() {
           {TINT_CHARTS.map((c) => (
             <article key={c.id} className="tint-chart">
               <a className="tint-chart__thumb" href={c.image} target="_blank" rel="noreferrer" aria-label={`Ver la ${c.name} completa`}>
-                <img src={c.thumb} alt="" loading="lazy" width="640" height="480" style={{ objectPosition: c.focus }} />
+                <img src={c.thumb} alt="" loading="lazy" width="336" height="252" />
               </a>
               <div>
                 <h3 className="tint-chart__title">{c.name}</h3>

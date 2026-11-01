@@ -218,11 +218,11 @@ export const TINT_CHARTS = [
   {
     id: '1k', name: 'Carta de tintes 1K', detail: `${seriesCount('1K')} series · ${count('1K')} tintes`,
     image: '/cartas-color/tinte-1k.webp', thumb: '/cartas-color/tinte-1k-mini.webp',
-    pdf: '/cartas-color/tinte-1k.pdf', size: '36 MB', focus: 'top',
+    pdf: '/cartas-color/tinte-1k.pdf', size: '36 MB',
   },
   {
     id: '2k', name: 'Carta de tintes 2K', detail: `${seriesCount('2K')} serie · ${count('2K')} tintes`,
     image: '/cartas-color/tinte-2k.webp', thumb: '/cartas-color/tinte-2k-mini.webp',
-    pdf: '/cartas-color/tinte-2k.pdf', size: '7.3 MB', focus: 'center',
+    pdf: '/cartas-color/tinte-2k.pdf', size: '7.3 MB',
   },
 ]
