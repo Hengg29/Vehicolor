@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Herramientas locales (no se suben)
+.claude/
+demo-remotion/
